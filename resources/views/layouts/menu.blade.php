@@ -1,6 +1,22 @@
 @php
     $user = Auth::user();
-    $role_has_permission = App\Models\Permission::where('role_id', $user->role_id)->pluck('permission')->toArray();
+    $role_has_permission = [];
+    try {
+        if ($user && $user->role_id) {
+            $role_has_permission = App\Models\Permission::where('role_id', $user->role_id)->pluck('permission')->toArray();
+        }
+        // If no permissions found, show all menu items (for development)
+        if (empty($role_has_permission) && config('app.debug')) {
+            // Allow all permissions in debug mode
+            $role_has_permission = ['god-eye', 'zone', 'admins', 'roles', 'users', 'vendors', 'restaurants', 'drivers', 'reports', 'category', 'foods', 'item-attribute', 'review-attribute', 'subscription-plan', 'orders', 'deliveryman', 'gift-cards', 'coupons', 'cashback', 'advertisements', 'documents', 'notifications', 'help-support', 'payout-requests', 'driver-payouts', 'restaurant-payouts', 'transactions', 'order-transactions', 'settings', 'cms', 'taxes', 'currencies', 'languages', 'menu-items', 'review-attributes', 'restaurant-filters', 'terms', 'privacy', 'home-page', 'footer'];
+        }
+    } catch (\Exception $e) {
+        \Log::error('Error loading permissions for menu: ' . $e->getMessage());
+        // In debug mode, show all menu items
+        if (config('app.debug')) {
+            $role_has_permission = ['god-eye', 'zone', 'admins', 'roles', 'users', 'vendors', 'restaurants', 'drivers', 'reports', 'category', 'foods', 'item-attribute', 'review-attribute', 'subscription-plan', 'orders', 'deliveryman', 'gift-cards', 'coupons', 'cashback', 'advertisements', 'documents', 'notifications', 'help-support', 'payout-requests', 'driver-payouts', 'restaurant-payouts', 'transactions', 'order-transactions', 'settings', 'cms', 'taxes', 'currencies', 'languages', 'menu-items', 'review-attributes', 'restaurant-filters', 'terms', 'privacy', 'home-page', 'footer'];
+        }
+    }
 @endphp
 <div class="sidebar-search">
     <input type="text" id="sideBarSearchInput" placeholder="Search Menu" autocomplete="one-time-code" onkeyup="filterMenu()">

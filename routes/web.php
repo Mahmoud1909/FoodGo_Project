@@ -70,6 +70,7 @@ Route::middleware(['permission:pending_vendors,pending.vendors.list'])->group(fu
 });
 Route::middleware(['permission:restaurants,restaurants'])->group(function () {
     Route::get('/restaurants', [App\Http\Controllers\RestaurantController::class, 'index'])->name('restaurants');
+    Route::post('/restaurants/log', [App\Http\Controllers\RestaurantController::class, 'log'])->name('restaurants.log');
 });
 Route::middleware(['permission:restaurants,restaurants.create'])->group(function () {
     Route::get('/restaurants/create', [App\Http\Controllers\RestaurantController::class, 'create'])->name('restaurants.create');

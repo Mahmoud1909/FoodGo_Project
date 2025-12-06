@@ -346,6 +346,34 @@ foreach ($countries as $keycountry => $valuecountry) {
             alert('{{trans("lang.error_reset_driver_password")}}');
         }
     });
+        // Define formatState functions before using them
+        var newcountriesjs = '<?php echo json_encode($newcountriesjs); ?>';
+        var newcountriesjs = JSON.parse(newcountriesjs);
+        
+        function formatState(state) {
+            if (!state.id) {
+                return state.text;
+            }
+            var baseUrl = "<?php echo URL::to('/');?>/scss/icons/flag-icon-css/flags";
+            var $state = $(
+                '<span><img src="' + baseUrl + '/' + newcountriesjs[state.element.value].toLowerCase() + '.svg" class="img-flag" /> ' + state.text + '</span>'
+            );
+            return $state;
+        }
+        
+        function formatState2(state) {
+            if (!state.id) {
+                return state.text;
+            }
+            var baseUrl = "<?php echo URL::to('/');?>/scss/icons/flag-icon-css/flags";
+            var $state = $(
+                '<span><img class="img-flag" /> <span></span></span>'
+            );
+            $state.find("span").text(state.text);
+            $state.find("img").attr("src", baseUrl + "/" + newcountriesjs[state.element.value].toLowerCase() + ".svg");
+            return $state;
+        }
+        
         $(document).ready(function() {
             if (!database) {
                 console.error('Database not available');
@@ -581,22 +609,6 @@ foreach ($countries as $keycountry => $valuecountry) {
         return newPhoto;
     }
     }); // End of waitForFirestore
-    
-    function formatState(state) {
-            if (!state.id) {
-                return state.text;
-            }
-            var baseUrl = "<?php echo URL::to('/');?>/scss/icons/flag-icon-css/flags";
-            var $state = $(
-                '<span><img src="' + baseUrl + '/' + newcountriesjs[state.element.value].toLowerCase() + '.svg" class="img-flag" /> ' + state.text + '</span>'
-            );
-            return $state;
-    }
-        function formatState2(state) {
-            if (!state.id) {
-                return state.text;
-            }
-            var baseUrl = "<?php echo URL::to('/');?>/scss/icons/flag-icon-css/flags"
             var $state = $(
                 '<span><img class="img-flag" /> <span></span></span>'
             );

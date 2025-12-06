@@ -21,16 +21,17 @@ class FirestoreHelper
             return $firestore;
         }
         
-        $projectId = env('FIREBASE_PROJECT_ID');
+        // Use config file if available, otherwise fallback to env
+        $projectId = config('firebase.project_id', env('FIREBASE_PROJECT_ID'));
         
         if (empty($projectId)) {
-            logger()->warning('FIREBASE_PROJECT_ID not set in .env file');
+            logger()->warning('FIREBASE_PROJECT_ID not set. Please check your .env file or config/firebase.php');
             $initializationFailed = true;
             return null;
         }
         
         // Try to use service account JSON file if available
-        $serviceAccountPath = storage_path('app/firebase/service-account.json');
+        $serviceAccountPath = config('firebase.service_account_path', storage_path('app/firebase/service-account.json'));
         
         try {
             if (file_exists($serviceAccountPath)) {

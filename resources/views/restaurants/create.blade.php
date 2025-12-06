@@ -887,16 +887,26 @@
             }
         })
         database.collection('settings').doc("AdminCommission").get().then(async function(snapshots) {
-            var adminCommissionSettings = snapshots.data();
-            $(".commission_fix").val(adminCommissionSettings.fix_commission);
-            $("#commission_type").val(adminCommissionSettings.commissionType);
+            if (snapshots && snapshots.exists) {
+                var adminCommissionSettings = snapshots.data();
+                if (adminCommissionSettings) {
+                    $(".commission_fix").val(adminCommissionSettings.fix_commission);
+                    $("#commission_type").val(adminCommissionSettings.commissionType);
+                }
+            }
         });
         database.collection('settings').doc("story").get().then(async function(snapshots) {
-            var story_data = snapshots.data();
-            if (story_data.isEnabled) {
-                $("#story_upload_div").show();
+            if (snapshots && snapshots.exists) {
+                var story_data = snapshots.data();
+                if (story_data && story_data.isEnabled) {
+                    $("#story_upload_div").show();
+                }
+                if (story_data && story_data.videoDuration) {
+                    storevideoDuration = story_data.videoDuration;
+                }
             }
-            storevideoDuration = story_data.videoDuration;
+        }).catch(function(error) {
+            console.warn('⚠️ Error loading story settings:', error);
         });
 
         database.collection('zone').where('publish', '==', true).orderBy('name', 'asc').get().then(async function(snapshots) {
@@ -935,9 +945,13 @@
         var currencyAtRight = false;
         var refCurrency = database.collection('currencies').where('isActive', '==', true);
         refCurrency.get().then(async function(snapshots) {
-            var currencyData = snapshots.docs[0].data();
-            currentCurrency = currencyData.symbol;
-            currencyAtRight = currencyData.symbolAtRight;
+            if (snapshots && !snapshots.empty && snapshots.docs.length > 0) {
+                var currencyData = snapshots.docs[0].data();
+                if (currencyData) {
+                    currentCurrency = currencyData.symbol;
+                    currencyAtRight = currencyData.symbolAtRight;
+                }
+            }
         });
 
 
@@ -953,13 +967,18 @@
             jQuery("#data-table_processing").show();
 
             await email_templates.get().then(async function(snapshots) {
-                emailTemplatesData = snapshots.docs[0].data();
+                if (snapshots && !snapshots.empty && snapshots.docs.length > 0) {
+                    emailTemplatesData = snapshots.docs[0].data();
+                }
             });
 
             await emailSetting.get().then(async function(snapshots) {
-                var emailSettingData = snapshots.data();
-
-                adminEmail = emailSettingData.userName;
+                if (snapshots && snapshots.exists) {
+                    var emailSettingData = snapshots.data();
+                    if (emailSettingData) {
+                        adminEmail = emailSettingData.userName;
+                    }
+                }
             });
 
             database.collection('vendor_categories').where('publish', '==', true).get().then(async function(snapshots) {
@@ -2116,27 +2135,32 @@
             var data = '';
             await database.collection('users').doc(selectedOwnerId).get().then(async function(
                 snapshot) {
-                data = snapshot.data();
+                if (snapshot && snapshot.exists) {
+                    data = snapshot.data();
+                }
             })
             return data;
         }
 
         $('#subscription_plan').on('change', function() {
             var id = $(this).val();
+            if (!id) return;
             database.collection('subscription_plans').where('id', '==', id).get().then(async function(snapshot) {
-                var data = snapshot.docs[0].data();
-                if (data.type == "paid") {
-                    if (data.features.dineIn == false) {
-                        $('#dine_in_div').addClass('d-none');
+                if (snapshot && !snapshot.empty && snapshot.docs.length > 0) {
+                    var data = snapshot.docs[0].data();
+                    if (data && data.type == "paid") {
+                        if (data.features && data.features.dineIn == false) {
+                            $('#dine_in_div').addClass('d-none');
+                        } else {
+                            $('#dine_in_div').removeClass('d-none');
+                        }
                     } else {
                         $('#dine_in_div').removeClass('d-none');
                     }
-                } else {
-                    $('#dine_in_div').removeClass('d-none');
                 }
-            })
-        })
-    
-        }); // End of waitForFirestore callback
+            }).catch(function(error) {
+                console.error('Error loading subscription plan:', error);
+            });
+        });
     </script>
 @endsection

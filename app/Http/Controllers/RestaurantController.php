@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class RestaurantController extends Controller
 {
@@ -14,8 +15,40 @@ class RestaurantController extends Controller
     
 	  public function index()
     {
+        Log::info('🍽️ Restaurants index page accessed', [
+            'user_id' => auth()->id(),
+            'timestamp' => now()->toDateTimeString()
+        ]);
 
         return view("restaurants.index");
+    }
+
+    public function log(Request $request)
+    {
+        $level = $request->input('level', 'info');
+        $message = $request->input('message', '');
+        $data = $request->input('data', []);
+
+        $logMessage = '🌐 [JS] ' . $message;
+        if (!empty($data)) {
+            $logMessage .= ' | Data: ' . json_encode($data);
+        }
+
+        switch ($level) {
+            case 'error':
+                Log::error($logMessage);
+                break;
+            case 'warning':
+                Log::warning($logMessage);
+                break;
+            case 'debug':
+                Log::debug($logMessage);
+                break;
+            default:
+                Log::info($logMessage);
+        }
+
+        return response()->json(['success' => true]);
     }
 
     public function vendors()

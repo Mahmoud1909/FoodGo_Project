@@ -390,8 +390,12 @@
                 (snapshot) => {
                     jQuery("#order_count").empty();
                     jQuery("#order_count").text(snapshot.docs.length);
+                    console.log('✅ Orders loaded:', snapshot.docs.length);
                 }).catch(function(error) {
-                    console.warn('Error loading order count:', error);
+                    console.error('❌ Error loading order count:', error);
+                    if (error.code === 'permission-denied') {
+                        console.error('❌ PERMISSION DENIED! Please update Firestore Rules');
+                    }
                     jQuery("#order_count").text('0');
                 }),
             // Total Products
@@ -399,24 +403,42 @@
                 (snapshot) => {
                     jQuery("#product_count").empty();
                     jQuery("#product_count").text(snapshot.docs.length);
+                    console.log('✅ Products loaded:', snapshot.docs.length);
                 }).catch(function(error) {
-                    console.warn('Error loading product count:', error);
+                    console.error('❌ Error loading product count:', error);
+                    if (error.code === 'permission-denied') {
+                        console.error('❌ PERMISSION DENIED! Please update Firestore Rules');
+                    }
                     jQuery("#product_count").text('0');
                 }),
             // Total Users
             db.collection('users').where("role", "==", "customer").get().then((snapshot) => {
                 jQuery("#users_count").empty();
-                jQuery("#users_count").append(snapshot.docs.length);
+                jQuery("#users_count").text(snapshot.docs.length);
+                console.log('✅ Users loaded:', snapshot.docs.length);
             }).catch(function(error) {
-                console.warn('Error loading users count:', error);
+                console.error('❌ Error loading users count:', error);
+                if (error.code === 'permission-denied') {
+                    console.error('❌ PERMISSION DENIED! Please update Firestore Rules');
+                } else if (error.code === 'failed-precondition') {
+                    console.error('❌ INDEX REQUIRED! Please create index in Firebase Console');
+                    console.error('❌ Collection: users, Fields: role (Ascending)');
+                }
                 jQuery("#users_count").text('0');
             }),
             // Total Drivers
             db.collection('users').where("role", "==", "driver").get().then((snapshot) => {
                 jQuery("#driver_count").empty();
-                jQuery("#driver_count").append(snapshot.docs.length);
+                jQuery("#driver_count").text(snapshot.docs.length);
+                console.log('✅ Drivers loaded:', snapshot.docs.length);
             }).catch(function(error) {
-                console.warn('Error loading drivers count:', error);
+                console.error('❌ Error loading drivers count:', error);
+                if (error.code === 'permission-denied') {
+                    console.error('❌ PERMISSION DENIED! Please update Firestore Rules');
+                } else if (error.code === 'failed-precondition') {
+                    console.error('❌ INDEX REQUIRED! Please create index in Firebase Console');
+                    console.error('❌ Collection: users, Fields: role (Ascending)');
+                }
                 jQuery("#driver_count").text('0');
             }),
             // Total Restaurants
@@ -424,9 +446,26 @@
                 (snapshot) => {
                     jQuery("#vendor_count").empty();
                     jQuery("#vendor_count").text(snapshot.docs.length);
+                    console.log('✅ Vendors loaded:', snapshot.docs.length);
                     setVisitors();
                 }).catch(function(error) {
-                    console.warn('Error loading vendors count:', error);
+                    console.error('❌ Error loading vendors count:', error);
+                    if (error.code === 'permission-denied') {
+                        console.error('❌ PERMISSION DENIED! Please update Firestore Rules');
+                    } else if (error.code === 'failed-precondition') {
+                        console.error('❌ INDEX REQUIRED! Please create index in Firebase Console');
+                        console.error('❌ Collection: vendors, Fields: title (Ascending)');
+                        // Fallback: try without where clause
+                        db.collection('vendors').get().then((snapshot) => {
+                            var count = 0;
+                            snapshot.docs.forEach(function(doc) {
+                                var data = doc.data();
+                                if (data.title && data.title !== '') count++;
+                            });
+                            jQuery("#vendor_count").text(count);
+                            console.log('✅ Vendors loaded (fallback):', count);
+                        });
+                    }
                     jQuery("#vendor_count").text('0');
                 })
         ]).then(() => {
@@ -548,6 +587,10 @@
             if (html != '') {
                 append_listvendors.innerHTML = html;
             }
+            // Check if DataTable already exists, destroy it first
+            if ($.fn.DataTable.isDataTable('#restaurantTable')) {
+                $('#restaurantTable').DataTable().destroy();
+            }
             $('#restaurantTable').DataTable({
                 order: [],
                 columnDefs: [
@@ -569,6 +612,10 @@
                 html = await buildHTML(snapshots);
                 if (html != '') {
                     append_listvendors.innerHTML = html;
+                }
+                // Check if DataTable already exists, destroy it first
+                if ($.fn.DataTable.isDataTable('#restaurantTable')) {
+                    $('#restaurantTable').DataTable().destroy();
                 }
                 $('#restaurantTable').DataTable({
                     order: [],
@@ -605,6 +652,10 @@
         // Get all drivers first, then sort in JavaScript (works without index)
         ref.where('role', '==', 'driver').get().then(async (snapshots) => {
             if (snapshots.empty) {
+                // Check if DataTable already exists, destroy it first
+                if ($.fn.DataTable.isDataTable('#driverTable')) {
+                    $('#driverTable').DataTable().destroy();
+                }
                 $('#driverTable').DataTable({
                     order: [],
                     columnDefs: [
@@ -661,6 +712,10 @@
                 append_listtop_drivers.innerHTML = html;
             }
             
+            // Check if DataTable already exists, destroy it first
+            if ($.fn.DataTable.isDataTable('#driverTable')) {
+                $('#driverTable').DataTable().destroy();
+            }
             $('#driverTable').DataTable({
                 order: [],
                 columnDefs: [
@@ -697,6 +752,10 @@
         var statuses = ["Order Placed", "Order Accepted", "Driver Pending", "Driver Accepted", "Order Shipped", "In Transit"];
         ref.where('status', 'in', statuses).get().then(async (snapshots) => {
             if (snapshots.empty) {
+                // Check if DataTable already exists, destroy it first
+                if ($.fn.DataTable.isDataTable('#orderTable')) {
+                    $('#orderTable').DataTable().destroy();
+                }
                 $('#orderTable').DataTable({
                     order: [],
                     "language": {
@@ -773,6 +832,10 @@
                 append_listrecent_order.innerHTML = html;
             }
             
+            // Check if DataTable already exists, destroy it first
+            if ($.fn.DataTable.isDataTable('#orderTable')) {
+                $('#orderTable').DataTable().destroy();
+            }
             $('#orderTable').DataTable({
                 order: [],
                 "language": {
@@ -801,7 +864,11 @@
         // Get all successful payouts, then sort in JavaScript (works without index)
         db.collection('payouts').where('paymentStatus', '==', 'Success').get().then(async (snapshots) => {
             if (snapshots.empty) {
-                setTimeout(function(){
+                    setTimeout(function(){
+                    // Check if DataTable already exists, destroy it first
+                    if ($.fn.DataTable.isDataTable('#recentPayoutsTable')) {
+                        $('#recentPayoutsTable').DataTable().destroy();
+                    }
                     $('#recentPayoutsTable').DataTable({
                         columnDefs: [
                             {
@@ -921,6 +988,10 @@
             }
             
             setTimeout(function(){
+                // Check if DataTable already exists, destroy it first
+                if ($.fn.DataTable.isDataTable('#recentPayoutsTable')) {
+                    $('#recentPayoutsTable').DataTable().destroy();
+                }
                 $('#recentPayoutsTable').DataTable({
                     columnDefs: [
                         {
@@ -1126,19 +1197,65 @@
     $(document).ready(function() {
         // Wait for Firestore to be initialized
         var retryCount = 0;
-        var maxRetries = 20; // 10 seconds max
+        var maxRetries = 40; // 20 seconds max (increased for reliability)
         
         var checkFirestore = function() {
+            // Try multiple ways to get database
+            var db = null;
             if (typeof database !== 'undefined' && database !== null) {
+                db = database;
+            } else if (typeof window.database !== 'undefined' && window.database !== null) {
+                db = window.database;
+            } else if (typeof window.firestoreDatabase !== 'undefined' && window.firestoreDatabase !== null) {
+                db = window.firestoreDatabase;
+            } else if (typeof window.getFirestoreDatabase === 'function') {
+                db = window.getFirestoreDatabase();
+            } else if (typeof firebase !== 'undefined' && firebase.firestore) {
+                try {
+                    db = firebase.firestore();
+                } catch (e) {
+                    console.warn('Could not get Firestore:', e);
+                }
+            }
+            
+            if (db) {
+                // Set database globally for this page
+                database = db;
+                window.database = db;
+                console.log('✅ Database found, initializing dashboard...');
                 initDashboard();
             } else if (retryCount < maxRetries) {
                 retryCount++;
+                if (retryCount % 10 === 0) {
+                    console.log('⏳ Waiting for Firestore... (' + retryCount + '/' + maxRetries + ')');
+                }
                 setTimeout(checkFirestore, 500);
             } else {
-                console.error('❌ Firestore not initialized after 10 seconds');
+                console.error('❌ Firestore not initialized after 20 seconds');
+                console.error('❌ Please check:');
+                console.error('   1. Firebase configuration in .env');
+                console.error('   2. Firestore Rules in Firebase Console');
+                console.error('   3. Browser Console for errors');
                 jQuery("#data-table_processing").hide();
+                
+                // Show user-friendly error
+                if (typeof jQuery !== 'undefined') {
+                    jQuery("#data-table_processing").html('<div style="text-align:center;padding:20px;"><h4>❌ Unable to connect to Firestore</h4><p>Please check the browser console (F12) for details</p></div>');
+                }
             }
         };
+        
+        // Also listen for firestoreReady event
+        if (typeof window.addEventListener !== 'undefined') {
+            window.addEventListener('firestoreReady', function() {
+                console.log('✅ Received firestoreReady event');
+                if (typeof database !== 'undefined' && database !== null) {
+                    initDashboard();
+                } else {
+                    checkFirestore();
+                }
+            });
+        }
         
         checkFirestore();
     });

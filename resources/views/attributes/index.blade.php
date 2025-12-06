@@ -112,7 +112,7 @@
                 console.error('❌ Firestore not available');
                 return;
             }
-    var ref = database.collection('vendor_attributes').orderBy('title');
+    var ref = null;
     var append_list = '';
     var user_permissions = '<?php echo @session("user_permissions") ?>';
     user_permissions = Object.values(JSON.parse(user_permissions));
@@ -120,6 +120,15 @@
     if ($.inArray('attributes.delete', user_permissions) >= 0) {
         checkDeletePermission = true;
     }
+    
+    // Try to get ref with orderBy, fallback without if index missing
+    try {
+        ref = database.collection('vendor_attributes').orderBy('title');
+    } catch (e) {
+        console.warn('⚠️ Could not create ordered query, using simple query');
+        ref = database.collection('vendor_attributes');
+    }
+    
     $(document).ready(function () {
         jQuery("#data-table_processing").show();
         const table = $('#attributeTable').DataTable({
@@ -138,7 +147,12 @@
                 if (searchValue.length >= 3 || searchValue.length === 0) {
                     $('#data-table_processing').show();
                 }
-                ref.get().then(async function (querySnapshot) {
+                // Try with orderBy, fallback without if index missing
+                var queryRef = ref;
+                if (!ref) {
+                    queryRef = database.collection('vendor_attributes');
+                }
+                queryRef.get().then(async function (querySnapshot) {
                     if (querySnapshot.empty) {
                         console.error("No data found in Firestore.");
                         $('#data-table_processing').hide(); // Hide loader

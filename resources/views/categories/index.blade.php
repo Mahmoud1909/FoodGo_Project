@@ -93,7 +93,13 @@
         }
         
         database = db;
-        ref = database.collection('vendor_categories').orderBy('title');
+        // Try with orderBy, fallback without if index missing
+        try {
+            ref = database.collection('vendor_categories').orderBy('title');
+        } catch (e) {
+            console.warn('⚠️ Could not create ordered query, using simple query');
+            ref = database.collection('vendor_categories');
+        }
         
         // Initialize page
         initCategoriesPage();
@@ -128,7 +134,12 @@
                 if (searchValue.length >= 3 || searchValue.length === 0) {
                     $('#data-table_processing').show();
                 }
-                ref.get().then(async function (querySnapshot) {
+                // Try with orderBy, fallback without if index missing
+                var queryRef = ref;
+                if (!ref) {
+                    queryRef = database.collection('vendor_categories');
+                }
+                queryRef.get().then(async function (querySnapshot) {
                     if (querySnapshot.empty) {
                         $('.category_count').text(0);    
                         console.error("No data found in Firestore.");

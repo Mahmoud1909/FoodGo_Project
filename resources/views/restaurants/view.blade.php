@@ -592,13 +592,7 @@
 @section('scripts')
     <script>
         var id = "<?php echo $id; ?>";
-        // Wait for Firestore to be ready
-        window.waitForFirestore(function(database) {
-            if (!database) {
-                console.error('❌ Firestore not available');
-                return;
-            }
-        var ref = database.collection('vendors').where("id", "==", id);
+        var database = null; // Global database variable
         var photo = "";
         var vendorAuthor = '';
         var restaurantOwnerId = "";
@@ -612,50 +606,102 @@
         var timeslotworkSatuarday = [];
         var timeslotworkThursday = [];
         var placeholderImage = '';
-        var placeholder = database.collection('settings').doc('placeHolderImage');
-        placeholder.get().then(async function(snapshotsimage) {
-            var placeholderImageData = snapshotsimage.data();
-            placeholderImage = placeholderImageData.image;
-        })
         var currentCurrency = '';
         var currencyAtRight = false;
         var decimal_degits = 0;
-        var refCurrency = database.collection('currencies').where('isActive', '==', true);
-        refCurrency.get().then(async function(snapshots) {
-            var currencyData = snapshots.docs[0].data();
-            currentCurrency = currencyData.symbol;
-            currencyAtRight = currencyData.symbolAtRight;
-            if (currencyData.decimal_degits) {
-                decimal_degits = currencyData.decimal_degits;
-            }
-        });
         var commisionModel = false;
         var AdminCommission = '';
-        database.collection('settings').doc("AdminCommission").get().then(async function(snapshots) {
-            var commissionSetting = snapshots.data();
-            if (commissionSetting.isEnabled == true) {
-                commisionModel = true;
-            }
-            if (commissionSetting.commissionType == "Percent") {
-                AdminCommission = commissionSetting.fix_commission + '' + '%';
-            } else {
-                if (currencyAtRight) {
-                    AdminCommission = commissionSetting.fix_commission.toFixed(decimal_degits) + currentCurrency;
-                } else {
-                    AdminCommission = currentCurrency + commissionSetting.fix_commission.toFixed(decimal_degits);
-                }
-            }
-        });
         var subscriptionModel = false;
-        database.collection('settings').doc("restaurant").get().then(async function(snapshots) {
-            var businessModelSettings = snapshots.data();
-            if (businessModelSettings.hasOwnProperty('subscription_model') && businessModelSettings.subscription_model == true) {
-                subscriptionModel = true;
-            }
-        });
-        var email_templates = database.collection('email_templates').where('type', '==', 'wallet_topup');
         var emailTemplatesData = null;
+        
+        console.log('🔍 Loading restaurant with ID:', id);
+        
+        // Wait for Firestore to be ready
+        window.waitForFirestore(function(db) {
+            if (!db) {
+                console.error('❌ Firestore not available');
+                return;
+            }
+            
+            database = db; // Assign to global variable
+            console.log('✅ Firestore initialized in view page');
+            
+            // Load settings and initialize
+            initializeSettings();
+        });
+        
+        function initializeSettings() {
+            if (!database) {
+                console.error('❌ Database not available');
+                return;
+            }
+            
+            // Load placeholder image
+            var placeholder = database.collection('settings').doc('placeHolderImage');
+            placeholder.get().then(async function(snapshotsimage) {
+                if (snapshotsimage.exists) {
+                    var placeholderImageData = snapshotsimage.data();
+                    placeholderImage = placeholderImageData.image;
+                }
+            }).catch(function(error) {
+                console.warn('Error loading placeholder image:', error);
+            });
+            
+            // Load currency
+            var refCurrency = database.collection('currencies').where('isActive', '==', true);
+            refCurrency.get().then(async function(snapshots) {
+                if (snapshots.docs.length > 0) {
+                    var currencyData = snapshots.docs[0].data();
+                    currentCurrency = currencyData.symbol;
+                    currencyAtRight = currencyData.symbolAtRight;
+                    if (currencyData.decimal_degits) {
+                        decimal_degits = currencyData.decimal_degits;
+                    }
+                }
+            }).catch(function(error) {
+                console.warn('Error loading currency:', error);
+            });
+            
+            // Load admin commission settings
+            database.collection('settings').doc("AdminCommission").get().then(async function(snapshots) {
+                if (snapshots.exists) {
+                    var commissionSetting = snapshots.data();
+                    if (commissionSetting.isEnabled == true) {
+                        commisionModel = true;
+                    }
+                    if (commissionSetting.commissionType == "Percent") {
+                        AdminCommission = commissionSetting.fix_commission + '' + '%';
+                    } else {
+                        if (currencyAtRight) {
+                            AdminCommission = commissionSetting.fix_commission.toFixed(decimal_degits) + currentCurrency;
+                        } else {
+                            AdminCommission = currentCurrency + commissionSetting.fix_commission.toFixed(decimal_degits);
+                        }
+                    }
+                }
+            }).catch(function(error) {
+                console.warn('Error loading admin commission:', error);
+            });
+            
+            // Load subscription model settings
+            database.collection('settings').doc("restaurant").get().then(async function(snapshots) {
+                if (snapshots.exists) {
+                    var businessModelSettings = snapshots.data();
+                    if (businessModelSettings.hasOwnProperty('subscription_model') && businessModelSettings.subscription_model == true) {
+                        subscriptionModel = true;
+                    }
+                }
+            }).catch(function(error) {
+                console.warn('Error loading subscription model:', error);
+            });
+        }
+        
+        // Event handlers (will be set up after database is ready)
         $(".save-form-btn").click(function() {
+            if (!database) {
+                console.error('❌ Database not available');
+                return;
+            }
             var date = firebase.firestore.FieldValue.serverTimestamp();
             var amount = $('#amount').val();
             if (amount == '') {
@@ -723,6 +769,10 @@
             });
         });
         async function getWalletBalance(vendorId) {
+            if (!database) {
+                console.error('❌ Database not available in getWalletBalance');
+                return;
+            }
             database.collection('users').where('id', '==', vendorId).get().then(async function(snapshot) {
                 if (snapshot.docs.length > 0) {
                     restaurant = snapshot.docs[0].data();
@@ -743,17 +793,43 @@
                 }
             });
         }
+        // Move $(document).ready outside loadRestaurantData and wait for database
         $(document).ready(async function() {
+            // Wait for database to be initialized
+            var maxWait = 10000; // 10 seconds max wait
+            var waitTime = 0;
+            var checkInterval = 100; // Check every 100ms
+            
+            while (!database && waitTime < maxWait) {
+                await new Promise(resolve => setTimeout(resolve, checkInterval));
+                waitTime += checkInterval;
+            }
+            
+            if (!database) {
+                console.error('❌ Database not available after waiting');
+                return;
+            }
+            
+            console.log('✅ Document ready, database is available');
             jQuery("#data-table_processing").show();
+            
+            // Get email templates
+            var email_templates = database.collection('email_templates').where('type', '==', 'wallet_topup');
             await email_templates.get().then(async function(snapshots) {
-                emailTemplatesData = snapshots.docs[0].data();
+                if (snapshots.docs.length > 0) {
+                    emailTemplatesData = snapshots.docs[0].data();
+                }
             });
+            
             var orders = await getTotalOrders();
-
-            ref.get().then(async function(snapshots) {
+            
+            // Get restaurant data
+            var ref = database.collection('vendors').doc(id);
+            ref.get().then(async function(snapshot) {
                 jQuery("#data-table_processing").hide();
-                if (!snapshots.empty) {
-                    var restaurant = snapshots.docs[0].data();
+                if (snapshot.exists) {
+                    var restaurant = snapshot.data();
+                    console.log('✅ Restaurant data loaded:', restaurant.title || 'N/A');
                     vendorAuthor = restaurant.author;
                     restaurantOwnerId = restaurant.author;
                     var earnings = await getTotalEarnings();
@@ -995,9 +1071,19 @@
                         });
                     }
                     jQuery("#data-table_processing").hide();
+                } else {
+                    console.error('❌ Restaurant not found with ID:', id);
+                    jQuery("#data-table_processing").hide();
                 }
+            }).catch(function(error) {
+                console.error('❌ Error loading restaurant:', error);
+                jQuery("#data-table_processing").hide();
             })
             $(".save_restaurant_btn").click(function() {
+                if (!database) {
+                    console.error('❌ Database not available');
+                    return;
+                }
                 var restaurantname = $(".restaurant_name").val();
                 var cuisines = $("#restaurant_cuisines option:selected").val();
                 var address = $(".restaurant_address").val();
@@ -1050,6 +1136,10 @@
             reader.readAsDataURL(f);
         }
         async function getStoreNameFunction(vendorId) {
+            if (!database) {
+                console.error('❌ Database not available in getStoreNameFunction');
+                return '';
+            }
             var vendorName = '';
             await database.collection('vendors').where('id', '==', vendorId).get().then(async function(snapshots) {
                 if (!snapshots.empty) {
@@ -1064,12 +1154,20 @@
             return vendorName;
         }
         async function getTotalOrders() {
+            if (!database) {
+                console.error('❌ Database not available in getTotalOrders');
+                return;
+            }
             await database.collection('restaurant_orders').where('vendorID', '==', '<?php echo $id; ?>').get().then(async function(orderSnapshots) {
                 var paymentData = orderSnapshots.docs;
                 $("#total_orders").text(paymentData.length);
             })
         }
         async function getTotalEarnings() {
+            if (!database) {
+                console.error('❌ Database not available in getTotalEarnings');
+                return 0;
+            }
             var totalEarning = 0;
             var adminCommission = 0;
             await database.collection('wallet').where('isTopUp', '==', true).where('user_id', '==', vendorAuthor).get().then(async function(snapshot) {
@@ -1094,6 +1192,10 @@
             return totalEarning;
         }
         async function getTotalpayment(driverID) {
+            if (!database) {
+                console.error('❌ Database not available in getTotalpayment');
+                return 0;
+            }
             var paid_price = 0;
             var total_price = 0;
             var remaining = 0;
@@ -1118,6 +1220,10 @@
             $("#plan-details").html('');
         });
         async function getSubscriptionPlan() {
+            if (!database) {
+                console.error('❌ Database not available in getSubscriptionPlan');
+                return;
+            }
             var activeSubscriptionId = '';
             var snapshots = await database.collection('subscription_history').where('user_id', '==', vendorAuthor).orderBy('createdAt', 'desc').get();
             if (snapshots.docs.length > 0) {
@@ -1222,6 +1328,10 @@
             });
         }
         async function showPlanDetail(planId) {
+            if (!database) {
+                console.error('❌ Database not available in showPlanDetail');
+                return;
+            }
             $("#plan_id").val(planId);
             var activePlan = '';
             var snapshots = await database.collection('subscription_history').where('user_id', '==', vendorAuthor).orderBy('createdAt', 'desc').get();
@@ -1338,6 +1448,10 @@
             showPlanDetail(planId);
         }
         async function finalCheckout() {
+            if (!database) {
+                console.error('❌ Database not available in finalCheckout');
+                return;
+            }
             let planId = $("#plan_id").val();
             if (planId != undefined && planId != '' && planId != null) {
                 var userId = vendorAuthor;
@@ -1354,18 +1468,19 @@
                         currentDate.setDate(currentDate.getDate() + parseInt(planData.expiryDay));
                         var expiryDay = firebase.firestore.Timestamp.fromDate(currentDate);
                     }
-                    database.collection('users').doc(userId).update({
+                    await database.collection('users').doc(userId).update({
                         'subscription_plan': planData,
                         'subscriptionPlanId': planId,
                         'subscriptionExpiryDate': expiryDay
-                    })
-                    database.collection('vendors').doc(vendorId).update({
-                        'subscription_plan': planData,
-                        'subscriptionPlanId': planId,
-                        'subscriptionExpiryDate': expiryDay,
-                        'subscriptionTotalOrders': planData.orderLimit
+                    }).then(async function() {
+                        await database.collection('vendors').doc(vendorId).update({
+                            'subscription_plan': planData,
+                            'subscriptionPlanId': planId,
+                            'subscriptionExpiryDate': expiryDay,
+                            'subscriptionTotalOrders': planData.orderLimit
+                        });
                     });
-                    database.collection('subscription_history').doc(id_order).set({
+                    await database.collection('subscription_history').doc(id_order).set({
                         'id': id_order,
                         'user_id': userId,
                         'expiry_date': expiryDay,
@@ -1394,7 +1509,15 @@
             }
         });
         $("#updateLimitModal").on('shown.bs.modal', function() {
+            if (!database) {
+                console.error('❌ Database not available in updateLimitModal');
+                return;
+            }
             database.collection('users').where('id', '==', vendorAuthor).get().then(async function(snapshot) {
+                if (snapshot.docs.length === 0) {
+                    console.error('❌ User not found');
+                    return;
+                }
                 var data = snapshot.docs[0].data();
                 if (data.subscription_plan.itemLimit != '-1') {
                     $("#limited_item").prop('checked', true);
@@ -1426,6 +1549,10 @@
                 $(".order_limit_err").html("<p>{{ trans('lang.enter_order_limit') }}</p>");
                 return false;
             } else {
+                if (!database) {
+                    console.error('❌ Database not available');
+                    return;
+                }
                 await database.collection('users').doc(vendorAuthor).update({
                     'subscription_plan.orderLimit': order_limit,
                     'subscription_plan.itemLimit': item_limit,
@@ -1440,7 +1567,6 @@
                 });
             }
         })
-    
-        }); // End of waitForFirestore callback
     </script>
 @endsection
+

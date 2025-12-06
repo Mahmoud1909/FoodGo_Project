@@ -261,7 +261,17 @@
                     if (searchValue.length >= 3 || searchValue.length === 0) {
                         $('#data-table_processing').show();
                     }
-                    ref.orderBy('createdAt', 'desc').get().then(async function(querySnapshot) {
+                    // Try with orderBy, fallback to without if index doesn't exist
+                    var queryPromise = ref.orderBy('createdAt', 'desc').get().catch(function(error) {
+                        if (error.code === 'failed-precondition') {
+                            console.warn('⚠️ Index required. Using query without orderBy. Create index:', error.message);
+                            // Fallback: get without orderBy and sort in memory
+                            return ref.get();
+                        }
+                        throw error;
+                    });
+                    
+                    queryPromise.then(async function(querySnapshot) {
                         if (querySnapshot.empty) {
                             $('.driver_count').text(0);
                             console.error("No data found in Firestore.");

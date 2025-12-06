@@ -6,6 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    <!-- Content Security Policy - Allow unsafe-eval for JavaScript libraries -->
+    <!-- Note: frame-ancestors is ignored in meta tags, it only works in HTTP headers -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.datatables.net https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://code.jquery.com https://unpkg.com https://*.googleapis.com https://*.gstatic.com https://*.firebase.com https://*.firebaseio.com https://*.google.com https://www.gstatic.com; style-src 'self' 'unsafe-inline' https://cdn.datatables.net https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://fonts.googleapis.com https://unpkg.com https://code.jquery.com https://*.gstatic.com; font-src 'self' https://fonts.gstatic.com https://fonts.googleapis.com data:; img-src 'self' data: https: http: blob:; connect-src 'self' https://*.googleapis.com https://*.firebase.com https://*.firebaseio.com https://*.google.com https://www.googleapis.com https://firestore.googleapis.com https://firebaselogging.googleapis.com https://unpkg.com wss://*.firebaseio.com ws://*.firebaseio.com https://*.firebaseio.com; frame-src 'self' https://*.google.com https://*.googleapis.com https://*.gstatic.com; object-src 'none'; base-uri 'self'; form-action 'self';">
 <!-- <title>{{ config('app.name', 'Laravel') }}</title> -->
     <title id="app_name"><?php echo @$_COOKIE['meta_title']; ?></title>
     <link rel="icon" id="favicon" type="image/x-icon"
@@ -296,14 +299,14 @@
 <script src="{{ asset('js/crypto-js.js') }}"></script>
 <script src="{{ asset('js/jquery.cookie.js') }}"></script>
 <script src="{{ asset('js/jquery.validate.js') }}"></script>
-<script src="https://www.gstatic.com/firebasejs/8.0.0/firebase-app.js" onload="window.firebaseAppLoaded = true;"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js" onload="window.firebaseAppLoaded = true;"></script>
 <script src="{{ asset('js/firestore-helper.js') }}"></script>
 <script src="{{ asset('js/firestore-global-fix.js') }}"></script>
-<script src="https://www.gstatic.com/firebasejs/8.0.0/firebase-firestore.js" onload="window.firebaseFirestoreLoaded = true;"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js" onload="window.firebaseFirestoreLoaded = true;"></script>
 <script src="{{ asset('js/firestore-auto-fix.js') }}"></script>
-<script src="https://www.gstatic.com/firebasejs/8.0.0/firebase-storage.js" onload="window.firebaseStorageLoaded = true;"></script>
-<script src="https://www.gstatic.com/firebasejs/8.0.0/firebase-auth.js" onload="window.firebaseAuthLoaded = true;"></script>
-<script src="https://www.gstatic.com/firebasejs/8.0.0/firebase-database.js" onload="window.firebaseDatabaseLoaded = true;"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js" onload="window.firebaseStorageLoaded = true;"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js" onload="window.firebaseAuthLoaded = true;"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js" onload="window.firebaseDatabaseLoaded = true;"></script>
 <script src="{{ asset('js/geofirestore.js') }}"></script>
 <script src="https://cdn.firebase.com/libs/geofire/5.0.1/geofire.min.js"></script>
 <script src="{{ asset('js/chosen.jquery.js') }}"></script>
@@ -325,16 +328,21 @@
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
 
 <script type="text/javascript">
-    // Firebase configuration - Use hardcoded config
+    // Firebase configuration - Load from .env file
     var firebaseConfig = {
-        apiKey: "AIzaSyCkywqfrDAEwt_WpeaTQlb6WD72zT1agzk",
-        authDomain: "foodgo-e1252.firebaseapp.com",
-        projectId: "foodgo-e1252",
-        storageBucket: "foodgo-e1252.firebasestorage.app",
-        messagingSenderId: "173178681240",
-        appId: "1:173178681240:web:b869928633af6714a19ded",
-        measurementId: "G-1TBDGMF2YM"
+        apiKey: "{{ env('FIREBASE_APIKEY', 'AIzaSyCkywqfrDAEwt_WpeaTQlb6WD72zT1agzk') }}",
+        authDomain: "{{ env('FIREBASE_AUTH_DOMAIN', 'foodgo-e1252.firebaseapp.com') }}",
+        projectId: "{{ env('FIREBASE_PROJECT_ID', 'foodgo-e1252') }}",
+        storageBucket: "{{ env('FIREBASE_STORAGE_BUCKET', 'foodgo-e1252.firebasestorage.app') }}",
+        messagingSenderId: "{{ env('FIREBASE_MESSAAGING_SENDER_ID', '173178681240') }}",
+        appId: "{{ env('FIREBASE_APP_ID', '1:173178681240:web:b869928633af6714a19ded') }}",
+        measurementId: "{{ env('FIREBASE_MEASUREMENT_ID', 'G-1TBDGMF2YM') }}"
     };
+    
+    // Validate Firebase configuration
+    if (!firebaseConfig.apiKey || !firebaseConfig.projectId) {
+        console.error('❌ Firebase configuration is missing! Please check your .env file.');
+    }
     
     // Initialize Firebase when SDK is loaded
     function initializeFirebase() {
@@ -368,16 +376,25 @@
                 setTimeout(function() {
                     if (typeof initializeFirestore === 'function') {
                         var retryCount = 0;
-                        var maxRetries = 10;
+                        var maxRetries = 20; // Increased retries for better reliability
                         var tryInitFirestore = function() {
                             if (initializeFirestore()) {
+                                console.log('✅ Firestore initialized and ready!');
+                                // Trigger custom event for other scripts
+                                if (typeof window.dispatchEvent !== 'undefined') {
+                                    window.dispatchEvent(new CustomEvent('firestoreReady'));
+                                }
                                 return; // Success
                             }
                             retryCount++;
                             if (retryCount < maxRetries) {
                                 setTimeout(tryInitFirestore, 200);
                             } else {
-                                console.warn('⚠️ Firestore not initialized after ' + maxRetries + ' retries');
+                                console.error('❌ Firestore not initialized after ' + maxRetries + ' retries');
+                                // Show user-friendly error
+                                if (typeof jQuery !== 'undefined') {
+                                    jQuery("#data-table_processing").hide();
+                                }
                             }
                         };
                         tryInitFirestore();
@@ -394,6 +411,11 @@
                 setTimeout(waitForFirebaseAndInit, 100);
             } else {
                 console.error('❌ Firebase SDK failed to load after 5 seconds');
+                console.error('Please check your internet connection and Firebase configuration');
+                // Show user-friendly error
+                if (typeof jQuery !== 'undefined') {
+                    jQuery("#data-table_processing").hide();
+                }
             }
         }
     }
@@ -508,9 +530,42 @@
             
             firestoreInitialized = true;
             console.log('✅ Firestore initialized successfully');
+            console.log('✅ Database instance ready:', database ? 'Yes' : 'No');
             
             // Make database available globally
             window.firestoreDatabase = database;
+            window.database = database; // Also set for backward compatibility
+            
+            // Test connection with a simple query
+            try {
+                database.collection('settings').limit(1).get().then(function() {
+                    console.log('✅ Firestore connection test successful');
+                    console.log('✅ Ready to interact with Firestore database');
+                }).catch(function(err) {
+                    console.error('❌ Firestore connection test failed:', err);
+                    if (err.code === 'permission-denied') {
+                        console.error('❌ PERMISSION DENIED!');
+                        console.error('❌ Please update Firestore Rules in Firebase Console');
+                        console.error('❌ Go to: Firebase Console → Firestore Database → Rules');
+                        console.error('❌ Use these rules for development:');
+                        console.error(`
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /{document=**} {
+      allow read, write: if true;
+    }
+  }
+}
+                        `);
+                    } else {
+                        console.error('❌ Error code:', err.code);
+                        console.error('❌ Error message:', err.message);
+                    }
+                });
+            } catch (e) {
+                console.error('❌ Could not test Firestore connection:', e);
+            }
             
             // Load settings from Firestore (non-blocking)
             loadFirestoreSettings();
@@ -877,9 +932,11 @@
         if (database) {
             try {
                 var googleMapKeySnapshotsHeader = await database.collection('settings').doc("googleMapKey").get();
-                var placeholderImageHeaderData = googleMapKeySnapshotsHeader.data();
-                if (placeholderImageHeaderData && placeholderImageHeaderData.key && placeholderImageHeaderData.key !== 'google_maps_api_key') {
-                    googleMapKey = placeholderImageHeaderData.key;
+                if (googleMapKeySnapshotsHeader && googleMapKeySnapshotsHeader.exists) {
+                    var placeholderImageHeaderData = googleMapKeySnapshotsHeader.data();
+                    if (placeholderImageHeaderData && placeholderImageHeaderData.key && placeholderImageHeaderData.key !== 'google_maps_api_key') {
+                        googleMapKey = placeholderImageHeaderData.key;
+                    }
                 }
             } catch (error) {
                 console.warn('Error loading Google Maps key from Firestore:', error);
