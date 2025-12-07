@@ -8,7 +8,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <!-- Content Security Policy - Allow unsafe-eval for JavaScript libraries -->
     <!-- Note: frame-ancestors is ignored in meta tags, it only works in HTTP headers -->
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.datatables.net https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://code.jquery.com https://unpkg.com https://*.googleapis.com https://*.gstatic.com https://*.firebase.com https://*.firebaseio.com https://*.google.com https://www.gstatic.com; style-src 'self' 'unsafe-inline' https://cdn.datatables.net https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://fonts.googleapis.com https://unpkg.com https://code.jquery.com https://*.gstatic.com; font-src 'self' https://fonts.gstatic.com https://fonts.googleapis.com data:; img-src 'self' data: https: http: blob:; connect-src 'self' https://*.googleapis.com https://*.firebase.com https://*.firebaseio.com https://*.google.com https://www.googleapis.com https://firestore.googleapis.com https://firebaselogging.googleapis.com https://unpkg.com wss://*.firebaseio.com ws://*.firebaseio.com https://*.firebaseio.com; frame-src 'self' https://*.google.com https://*.googleapis.com https://*.gstatic.com; object-src 'none'; base-uri 'self'; form-action 'self';">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.datatables.net https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://*.cdnjs.cloudflare.com https://code.jquery.com https://unpkg.com https://*.googleapis.com https://*.gstatic.com https://*.firebase.com https://*.firebaseio.com https://*.google.com https://www.gstatic.com; style-src 'self' 'unsafe-inline' https://cdn.datatables.net https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://*.cdnjs.cloudflare.com https://fonts.googleapis.com https://unpkg.com https://code.jquery.com https://*.gstatic.com; font-src 'self' https://fonts.gstatic.com https://fonts.googleapis.com data:; img-src 'self' data: https: http: blob:; connect-src 'self' https://*.googleapis.com https://*.firebase.com https://*.firebaseio.com https://*.google.com https://www.googleapis.com https://firestore.googleapis.com https://firebaselogging.googleapis.com https://unpkg.com https://cdnjs.cloudflare.com https://*.cdnjs.cloudflare.com https://ajax.googleapis.com https://cdnjs.cloudflare.com/ajax/libs/moment.js https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.26.0/moment.min.js.map wss://*.firebaseio.com ws://*.firebaseio.com https://*.firebaseio.com; frame-src 'self' https://*.google.com https://*.googleapis.com https://*.gstatic.com; object-src 'none'; base-uri 'self'; form-action 'self';">
 <!-- <title>{{ config('app.name', 'Laravel') }}</title> -->
     <title id="app_name"><?php echo @$_COOKIE['meta_title']; ?></title>
     <link rel="icon" id="favicon" type="image/x-icon"
@@ -215,15 +215,19 @@
         @media screen and ( max-width: 767px ) {
 
             .mini-sidebar .sidebar-nav ul li a:hover, .sidebar-nav > ul > li.active > a {
-                color: <?php    echo $_COOKIE['admin_panel_color']; ?>  !important;
+                color: #2c9653 !important;
             }
 
             .mini-sidebar .sidebar-nav #sidebarnav > li:hover a i, .mini-sidebar .sidebar-nav ul li a, .sidebar-nav ul li a.active i, .sidebar-nav ul li a.active:hover i, .sidebar-nav ul li.active a:hover i {
-                color: #fff;
+                color: #2c9653 !important;
             }
 
             .sidebar-nav > ul > li.active > a, .sidebar-nav > ul > li.active > a i, .sidebar-nav > ul > li > a:hover i {
-                color: <?php    echo $_COOKIE['admin_panel_color']; ?>  !important;
+                color: #2c9653 !important;
+            }
+            
+            .mini-sidebar .sidebar-nav #sidebarnav > li:hover > a .hide-menu {
+                color: #2c9653 !important;
             }
         }
     </style>
@@ -359,9 +363,18 @@
             }
             
             // Initialize Firebase
-            firebase.initializeApp(firebaseConfig);
-            console.log('✅ Firebase initialized successfully');
-            return true;
+            try {
+                firebase.initializeApp(firebaseConfig);
+                console.log('✅ Firebase initialized successfully');
+                return true;
+            } catch (initError) {
+                // If Firebase is already initialized, that's okay
+                if (initError.code === 'app/duplicate-app') {
+                    console.log('ℹ️ Firebase already initialized (duplicate app)');
+                    return true;
+                }
+                throw initError;
+            }
         } catch (error) {
             console.error('❌ Firebase initialization error:', error);
             return false;
@@ -1194,6 +1207,15 @@ service cloud.firestore {
         } catch (error) {
 
         }
+    };
+
+</script>
+
+@yield('scripts')
+
+</body>
+</html>
+
     };
 
 </script>

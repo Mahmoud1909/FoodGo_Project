@@ -71,12 +71,18 @@ Route::middleware(['permission:pending_vendors,pending.vendors.list'])->group(fu
 Route::middleware(['permission:restaurants,restaurants'])->group(function () {
     Route::get('/restaurants', [App\Http\Controllers\RestaurantController::class, 'index'])->name('restaurants');
     Route::post('/restaurants/log', [App\Http\Controllers\RestaurantController::class, 'log'])->name('restaurants.log');
+    Route::get('/restaurants/control', [App\Http\Controllers\RestaurantController::class, 'control'])->name('restaurants.control');
 });
 Route::middleware(['permission:restaurants,restaurants.create'])->group(function () {
     Route::get('/restaurants/create', [App\Http\Controllers\RestaurantController::class, 'create'])->name('restaurants.create');
 });
 Route::middleware(['permission:restaurants,restaurants.edit'])->group(function () {
     Route::get('/restaurants/edit/{id}', [App\Http\Controllers\RestaurantController::class, 'edit'])->name('restaurants.edit');
+    Route::get('/restaurants/edit-new/{id}', [App\Http\Controllers\RestaurantController::class, 'editNew'])->name('restaurants.edit.new');
+    Route::get('/restaurants/control/edit/{id}', [App\Http\Controllers\RestaurantController::class, 'controlEdit'])->name('restaurants.control.edit');
+    Route::get('/restaurants/control/edit-new/{id}', [App\Http\Controllers\RestaurantController::class, 'controlEditNew'])->name('restaurants.control.edit.new');
+    Route::get('/restaurants/control/editing/{id}', [App\Http\Controllers\RestaurantController::class, 'restaurantEditing'])->name('restaurants.control.editing');
+    Route::get('/restaurants/control/edit-this/{id}', [App\Http\Controllers\RestaurantController::class, 'editThisRestaurant'])->name('restaurants.control.edit.this');
 });
 Route::middleware(['permission:restaurants,restaurants.view'])->group(function () {
     Route::get('/restaurants/view/{id}', [App\Http\Controllers\RestaurantController::class, 'view'])->name('restaurants.view');
@@ -561,6 +567,12 @@ Route::middleware(['permission:drivers,drivers.chat'])->group(function () {
 });
 Route::middleware(['permission:users,users.chat'])->group(function () {
         Route::get('/users/chat/{id}', [App\Http\Controllers\UserController::class, 'userChat'])->name('users.chat');
+});
+Route::middleware(['permission:supportHistory,supportHistory.list'])->group(function () {
+        Route::get('/support', [App\Http\Controllers\SupportHistoryController::class, 'index'])->name('users.support');
+});
+Route::middleware(['permission:vendors,vendors.chat'])->group(function () {
+        Route::get('/vendors/chat/{id}', [App\Http\Controllers\RestaurantController::class, 'vendorChat'])->name('vendors.chat');
 });
 Route::middleware(['permission:supportHistory,supportHistory.list'])->group(function () {
         Route::get('/support', [App\Http\Controllers\SupportHistoryController::class, 'index'])->name('users.support');

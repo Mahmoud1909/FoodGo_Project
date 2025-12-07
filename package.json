@@ -20,6 +20,6 @@
         "sass-loader": "^11.0.1"
     },
     "dependencies": {
-        "firebase-admin": "^13.2.0"
+        "firebase-admin": "^13.6.0"
     }
 }

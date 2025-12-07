@@ -144,6 +144,8 @@
         }
       ]
     },
+
+
     {
       "collectionGroup": "advertisements",
       "queryScope": "COLLECTION",
@@ -186,6 +188,8 @@
         }
       ]
     },
+
+    
     {
       "collectionGroup": "booked_table",
       "queryScope": "COLLECTION",
@@ -268,6 +272,8 @@
         }
       ]
     },
+
+
     {
       "collectionGroup": "cashback",
       "queryScope": "COLLECTION",
@@ -332,6 +338,8 @@
         }
       ]
     },
+
+
     {
       "collectionGroup": "chat",
       "queryScope": "COLLECTION",
@@ -346,6 +354,8 @@
         }
       ]
     },
+
+
     {
       "collectionGroup": "chat",
       "queryScope": "COLLECTION",
@@ -360,6 +370,8 @@
         }
       ]
     },
+
+
     {
       "collectionGroup": "chat",
       "queryScope": "COLLECTION",
@@ -374,6 +386,8 @@
         }
       ]
     },
+
+
     {
       "collectionGroup": "chat",
       "queryScope": "COLLECTION",
@@ -396,6 +410,8 @@
         }
       ]
     },
+
+
     {
       "collectionGroup": "chat",
       "queryScope": "COLLECTION",
@@ -414,6 +430,9 @@
         }
       ]
     },
+
+
+
     {
       "collectionGroup": "chat",
       "queryScope": "COLLECTION",
@@ -428,6 +447,8 @@
         }
       ]
     },
+
+
     {
       "collectionGroup": "chat_admin",
       "queryScope": "COLLECTION",
@@ -442,6 +463,10 @@
         }
       ]
     },
+
+
+
+
     {
       "collectionGroup": "chat_driver",
       "queryScope": "COLLECTION",
@@ -456,6 +481,8 @@
         }
       ]
     },
+
+
     {
       "collectionGroup": "chat_driver",
       "queryScope": "COLLECTION",
@@ -470,6 +497,9 @@
         }
       ]
     },
+
+
+
     {
       "collectionGroup": "chat_restaurant",
       "queryScope": "COLLECTION",
@@ -484,6 +514,11 @@
         }
       ]
     },
+
+
+
+                
+
     {
       "collectionGroup": "chat_restaurant",
       "queryScope": "COLLECTION",
@@ -498,6 +533,8 @@
         }
       ]
     },
+
+
     {
       "collectionGroup": "cms_pages",
       "queryScope": "COLLECTION",
@@ -530,6 +567,7 @@
         }
       ]
     },
+
     {
       "collectionGroup": "coupons",
       "queryScope": "COLLECTION",
@@ -544,6 +582,9 @@
         }
       ]
     },
+
+
+
     {
       "collectionGroup": "coupons",
       "queryScope": "COLLECTION",
@@ -580,6 +621,10 @@
         }
       ]
     },
+
+
+
+
     {
       "collectionGroup": "coupons",
       "queryScope": "COLLECTION",
@@ -598,6 +643,8 @@
         }
       ]
     },
+
+
     {
       "collectionGroup": "coupons",
       "queryScope": "COLLECTION",
@@ -612,6 +659,7 @@
         }
       ]
     },
+      
     {
       "collectionGroup": "coupons",
       "queryScope": "COLLECTION",
@@ -654,6 +702,8 @@
         }
       ]
     },
+
+
     {
       "collectionGroup": "driver_payouts",
       "queryScope": "COLLECTION",
@@ -696,6 +746,15 @@
         }
       ]
     },
+
+
+
+
+
+
+
+
+
     {
       "collectionGroup": "driver_payouts",
       "queryScope": "COLLECTION",
@@ -738,6 +797,9 @@
         }
       ]
     },
+
+
+
     {
       "collectionGroup": "driver_payouts",
       "queryScope": "COLLECTION",
@@ -794,6 +856,8 @@
         }
       ]
     },
+
+
     {
       "collectionGroup": "foods_review",
       "queryScope": "COLLECTION",
@@ -808,6 +872,7 @@
         }
       ]
     },
+
     {
       "collectionGroup": "foods_review",
       "queryScope": "COLLECTION",
@@ -836,6 +901,12 @@
         }
       ]
     },
+
+
+
+
+
+
     {
       "collectionGroup": "gift_purchases",
       "queryScope": "COLLECTION",
@@ -938,6 +1009,11 @@
         }
       ]
     },
+
+
+
+
+
     {
       "collectionGroup": "payouts",
       "queryScope": "COLLECTION",
@@ -952,6 +1028,24 @@
         }
       ]
     },
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     {
       "collectionGroup": "payouts",
       "queryScope": "COLLECTION",
@@ -1044,6 +1138,8 @@
         }
       ]
     },
+
+
     {
       "collectionGroup": "payouts",
       "queryScope": "COLLECTION",
@@ -1058,6 +1154,7 @@
         }
       ]
     },
+
     {
       "collectionGroup": "payouts",
       "queryScope": "COLLECTION",
@@ -1090,6 +1187,8 @@
         }
       ]
     },
+
+
     {
       "collectionGroup": "pos_orders",
       "queryScope": "COLLECTION",
@@ -1104,6 +1203,9 @@
         }
       ]
     },
+
+
+
     {
       "collectionGroup": "pos_orders",
       "queryScope": "COLLECTION",
@@ -1224,6 +1326,8 @@
         }
       ]
     },
+
+    
     {
       "collectionGroup": "restaurant_orders",
       "queryScope": "COLLECTION",
@@ -1328,6 +1432,9 @@
         }
       ]
     },
+
+
+
     {
       "collectionGroup": "restaurant_orders",
       "queryScope": "COLLECTION",
@@ -1368,6 +1475,9 @@
         }
       ]
     },
+
+
+
     {
       "collectionGroup": "restaurant_orders",
       "queryScope": "COLLECTION",
@@ -1428,6 +1538,9 @@
         }
       ]
     },
+
+
+    
     {
       "collectionGroup": "restaurant_orders",
       "queryScope": "COLLECTION",
@@ -1510,6 +1623,8 @@
         }
       ]
     },
+
+
     {
       "collectionGroup": "restaurant_orders",
       "queryScope": "COLLECTION",
@@ -1528,6 +1643,8 @@
         }
       ]
     },
+
+    
     {
       "collectionGroup": "restaurant_orders",
       "queryScope": "COLLECTION",
@@ -1614,6 +1731,8 @@
         }
       ]
     },
+
+    
     {
       "collectionGroup": "restaurant_orders",
       "queryScope": "COLLECTION",
@@ -1836,6 +1955,19 @@
         }
       ]
     },
+
+
+
+
+
+
+
+
+
+
+
+
+
     {
       "collectionGroup": "thread",
       "queryScope": "COLLECTION",
@@ -1880,6 +2012,8 @@
         }
       ]
     },
+
+
     {
       "collectionGroup": "users",
       "queryScope": "COLLECTION",
@@ -2114,6 +2248,7 @@
         }
       ]
     },
+
     {
       "collectionGroup": "users",
       "queryScope": "COLLECTION",
@@ -2198,6 +2333,9 @@
         }
       ]
     },
+
+
+    
     {
       "collectionGroup": "users",
       "queryScope": "COLLECTION",
@@ -2560,6 +2698,10 @@
         }
       ]
     },
+
+
+
+
     {
       "collectionGroup": "vendor_products",
       "queryScope": "COLLECTION",
@@ -2597,6 +2739,8 @@
       ]
     },
     {
+
+
       "collectionGroup": "vendor_products",
       "queryScope": "COLLECTION",
       "fields": [
@@ -2624,6 +2768,17 @@
         }
       ]
     },
+
+
+
+
+
+
+
+
+
+
+
     {
       "collectionGroup": "vendor_products",
       "queryScope": "COLLECTION",
@@ -2694,6 +2849,12 @@
         }
       ]
     },
+    
+
+
+
+
+
     {
       "collectionGroup": "vendors",
       "queryScope": "COLLECTION",
@@ -2776,6 +2937,10 @@
         }
       ]
     },
+
+
+
+    
     {
       "collectionGroup": "vendors",
       "queryScope": "COLLECTION",
@@ -2801,6 +2966,20 @@
         {
           "fieldPath": "createdAt",
           "order": "DESCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "vendors",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "createdAt",
+          "order": "DESCENDING"
+        },
+        {
+          "fieldPath": "id",
+          "order": "ASCENDING"
         }
       ]
     },

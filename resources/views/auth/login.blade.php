@@ -42,7 +42,7 @@
         height: 20px;
     }
     .login-register {
-        background-color: #FF683A;
+        background-color: #2c9653;
     }
     <?php if(isset($_COOKIE['admin_panel_color'])){ ?>
     a, a:hover, a:focus {

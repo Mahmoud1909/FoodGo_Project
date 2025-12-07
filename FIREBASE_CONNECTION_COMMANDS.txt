@@ -1,0 +1,100 @@
+# 🔥 أوامر Terminal للتحقق من الاتصال بـ Firebase
+
+## 1. التحقق من تثبيت Firebase CLI
+firebase --version
+
+## 2. التحقق من حالة Login
+firebase login:list
+
+## 3. التحقق من المشاريع المتاحة
+firebase projects:list
+
+## 4. التحقق من المشروع الحالي
+firebase use
+
+## 5. التحقق من Firestore Rules
+firebase firestore:rules:get
+
+## 6. التحقق من Firestore Indexes
+firebase firestore:indexes
+
+## 7. اختبار الاتصال الكامل (جميع الأوامر معاً)
+firebase projects:list && firebase use && firebase firestore:rules:get
+
+## 8. التحقق من Firebase Config
+cat .firebaserc
+
+## 9. التحقق من Firebase JSON Config
+cat firebase.json
+
+## 10. اختبار Firestore Connection (Node.js)
+node test-firestore-connection.js
+
+## 11. إعادة Login (إذا لزم الأمر)
+firebase login --reauth
+
+## 12. تغيير المشروع
+firebase use foodgo-e1252
+
+## 13. مسح Cache وإعادة المحاولة
+php artisan view:clear
+firebase use foodgo-e1252
+
+## 14. التحقق من Node.js و npm
+node --version
+npm --version
+
+## 15. تثبيت Firebase Admin SDK (إذا لم يكن مثبت)
+npm install firebase-admin
+
+
+
+
+## 1. التحقق من تثبيت Firebase CLI
+firebase --version
+
+## 2. التحقق من حالة Login
+firebase login:list
+
+## 3. التحقق من المشاريع المتاحة
+firebase projects:list
+
+## 4. التحقق من المشروع الحالي
+firebase use
+
+## 5. التحقق من Firestore Rules
+firebase firestore:rules:get
+
+## 6. التحقق من Firestore Indexes
+firebase firestore:indexes
+
+## 7. اختبار الاتصال الكامل (جميع الأوامر معاً)
+firebase projects:list && firebase use && firebase firestore:rules:get
+
+## 8. التحقق من Firebase Config
+cat .firebaserc
+
+## 9. التحقق من Firebase JSON Config
+cat firebase.json
+
+## 10. اختبار Firestore Connection (Node.js)
+node test-firestore-connection.js
+
+## 11. إعادة Login (إذا لزم الأمر)
+firebase login --reauth
+
+## 12. تغيير المشروع
+firebase use foodgo-e1252
+
+## 13. مسح Cache وإعادة المحاولة
+php artisan view:clear
+firebase use foodgo-e1252
+
+## 14. التحقق من Node.js و npm
+node --version
+npm --version
+
+## 15. تثبيت Firebase Admin SDK (إذا لم يكن مثبت)
+npm install firebase-admin
+
+

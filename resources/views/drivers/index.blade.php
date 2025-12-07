@@ -372,7 +372,22 @@
                                 childData.isActive ? '<label class="switch"><input type="checkbox" checked id="' + childData.id + '" name="isOnline"><span class="slider round"></span></label>' : '<label class="switch"><input type="checkbox" id="' + childData.id + '" name="isOnline"><span class="slider round"></span></label>',
                                 '<a href="' + walletTransactions + '">{{ trans('lang.wallet_history') }}</a>',
                                 '<a href="' + trroute2 + '">' + childData.orders + '</a>',
-                                '<span class="action-btn"><a href="' + driverView + '"><i class="mdi mdi-eye"></i></a><a href="' + route1 + '"><i class="mdi mdi-lead-pencil" title="Edit"></i></a><?php if (in_array('driver.delete', json_decode(@session('user_permissions'), true))) { ?> <a id="' + childData.id + '" name="driver-delete" class="delete-btn" href="javascript:void(0)"><i class="mdi mdi-delete"></i></a><?php } ?>'+  '<?php if (in_array("drivers.chat", (array) json_decode(@session("user_permissions"), true))) { ?>' +
+                                (function() {
+                                    var currentStatus = childData.approvalStatus || 'waiting';
+                                    var statusIcon = '';
+                                    var statusColor = '#2c9653';
+                                    if (currentStatus === 'approved') {
+                                        statusIcon = 'mdi-check-circle';
+                                        statusColor = '#2c9653';
+                                    } else if (currentStatus === 'rejected') {
+                                        statusIcon = 'mdi-close-circle';
+                                        statusColor = '#dc3545';
+                                    } else {
+                                        statusIcon = 'mdi-clock-outline';
+                                        statusColor = '#ffc107';
+                                    }
+                                    return '<span class="action-btn"><a href="' + driverView + '"><i class="mdi mdi-eye"></i></a><div class="dropdown" style="display: inline-block;"><a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown" driver_id="' + childData.id + '" approval_status="' + currentStatus + '" name="driver-status-dropdown" title="Change Status"><i class="mdi ' + statusIcon + '" style="color: ' + statusColor + '; font-size: 18px;"></i></a><ul class="dropdown-menu status-dropdown-menu" role="menu"><li><a href="javascript:void(0)" class="status-option-driver-list" data-status="waiting" data-driver-id="' + childData.id + '"><i class="mdi mdi-clock-outline" style="color: #ffc107;"></i> Waiting</a></li><li><a href="javascript:void(0)" class="status-option-driver-list" data-status="rejected" data-driver-id="' + childData.id + '"><i class="mdi mdi-close-circle" style="color: #dc3545;"></i> Rejected</a></li><li><a href="javascript:void(0)" class="status-option-driver-list" data-status="approved" data-driver-id="' + childData.id + '"><i class="mdi mdi-check-circle" style="color: #2c9653;"></i> Approved</a></li></ul></div><?php if (in_array('driver.delete', json_decode(@session('user_permissions'), true))) { ?> <a id="' + childData.id + '" name="driver-delete" class="delete-btn" href="javascript:void(0)"><i class="mdi mdi-delete"></i></a><?php } ?>'+  '<?php if (in_array("drivers.chat", (array) json_decode(@session("user_permissions"), true))) { ?>' +
+                                })() +
                             '<a href="' + chatViewRoute + '" class="chat-message" style="position: relative; display: inline-block;">' +
                             '<i class="mdi mdi-wechat mdi-24px"></i>' + unreadHtml +
                             '</a>' +
@@ -388,7 +403,34 @@
                             data: records // The actual data to display in the table
                         });
                     }).catch(function(error) {
-                        console.error("Error fetching data from Firestore:", error);
+                        console.error('❌ [DRIVERS] ========================================');
+                        console.error('❌ [DRIVERS] Error fetching data from Firestore');
+                        console.error('❌ [DRIVERS] ========================================');
+                        console.error('❌ [DRIVERS] Error Code:', error.code);
+                        console.error('❌ [DRIVERS] Error Message:', error.message);
+                        
+                        if (error.code === 'permission-denied') {
+                            console.error('🚫 [DRIVERS] ========================================');
+                            console.error('🚫 [DRIVERS] PERMISSION DENIED ERROR!');
+                            console.error('🚫 [DRIVERS] ========================================');
+                            console.error('🚫 [DRIVERS] Firestore Rules are blocking access!');
+                            console.error('🚫 [DRIVERS] Collection: /users');
+                            console.error('🚫 [DRIVERS] Query: role == "driver"');
+                            console.error('🚫 [DRIVERS] Solution:');
+                            console.error('   1. Go to Firebase Console → Firestore → Rules');
+                            console.error('   2. Ensure rules allow read: match /users/{document=**} { allow read: if true; }');
+                            console.error('   3. Deploy rules: firebase deploy --only firestore:rules');
+                        } else if (error.code === 'failed-precondition') {
+                            console.error('🚫 [DRIVERS] ========================================');
+                            console.error('🚫 [DRIVERS] INDEX REQUIRED!');
+                            console.error('🚫 [DRIVERS] ========================================');
+                            console.error('🚫 [DRIVERS] Required Index: users/role + createdAt');
+                            console.error('🚫 [DRIVERS] Solution:');
+                            console.error('   1. Go to Firebase Console → Firestore → Indexes');
+                            console.error('   2. Create index: users collection, role (Ascending), createdAt (Descending)');
+                            console.error('   3. Or deploy: firebase deploy --only firestore:indexes');
+                        }
+                        
                         $('#data-table_processing').hide(); // Hide loader
                         callback({
                             draw: data.draw,
@@ -608,6 +650,266 @@
             jQuery("#search").val('');
             searchtext();
         }
+        
+        // Status Change Handler for Drivers
+        $(document).on("click", "a[name='driver-status-change']", async function(e) {
+            e.preventDefault();
+            var driverId = $(this).attr('driver_id');
+            var currentStatus = $(this).attr('approval_status') || 'waiting';
+            
+            var statusOptions = ['waiting', 'rejected', 'approved'];
+            var statusLabels = {
+                'waiting': 'Waiting',
+                'rejected': 'Rejected',
+                'approved': 'Approved'
+            };
+            
+            var currentIndex = statusOptions.indexOf(currentStatus);
+            var nextIndex = (currentIndex + 1) % statusOptions.length;
+            var nextStatus = statusOptions[nextIndex];
+            
+            if (!confirm('Change status from ' + statusLabels[currentStatus] + ' to ' + statusLabels[nextStatus] + '?')) {
+                return;
+            }
+            
+            jQuery("#data-table_processing").show();
+            
+            try {
+                if (database) {
+                    await database.collection('users').doc(driverId).update({
+                        'approvalStatus': nextStatus
+                    });
+                    alert('Status changed to ' + statusLabels[nextStatus]);
+                    if ($.fn.DataTable.isDataTable('#driverTable')) {
+                        $('#driverTable').DataTable().ajax.reload(null, false);
+                    }
+                }
+            } catch (error) {
+                console.error('❌ Error changing driver status:', error);
+                alert('Error changing status: ' + error.message);
+            } finally {
+                jQuery("#data-table_processing").hide();
+            }
+        });
+        
         } // End of initDriversPage
     </script>
+@endsection
+
+@section('styles')
+<style>
+    .status-dropdown-menu {
+        min-width: 180px;
+        padding: 5px 0;
+        margin: 2px 0 0;
+        background-color: #fff;
+        border: 1px solid rgba(0,0,0,.15);
+        border-radius: 4px;
+        box-shadow: 0 6px 12px rgba(0,0,0,.175);
+        z-index: 1000;
+    }
+    
+    .status-dropdown-menu li {
+        list-style: none;
+    }
+    
+    .status-dropdown-menu li a {
+        display: block;
+        padding: 8px 20px;
+        clear: both;
+        font-weight: normal;
+        line-height: 1.42857143;
+        color: #333;
+        white-space: nowrap;
+        text-decoration: none;
+    }
+    
+    .status-dropdown-menu li a:hover {
+        background-color: #f5f5f5;
+        color: #2c9653;
+    }
+    
+    .status-dropdown-menu li a .mdi {
+        margin-right: 8px;
+        font-size: 18px;
+        vertical-align: middle;
+    }
+    
+    .dropdown {
+        position: relative;
+        display: inline-block;
+    }
+    
+    .dropdown-toggle {
+        cursor: pointer;
+    }
+    
+    .dropdown-menu.show {
+        display: block;
+    }
+</style>
+@endsection
+
+                            window.location.reload();
+                        }, 7000);
+                    });
+                }
+            } else {
+                alert("{{ trans('lang.select_delete_alert') }}");
+            }
+        });
+        $(document.body).on('click', '.redirecttopage', function() {
+            var url = $(this).attr('data-url');
+            window.location.href = url;
+        });
+        $(document).on("click", "a[name='driver-delete']", async function(e) {
+            var id = this.id;
+            await deleteDocumentWithImage('users', id, 'profilePictureURL');
+            deleteDriverData(id).then(function() {
+                setTimeout(function() {
+                    window.location.reload();
+                }, 9000);
+            });
+        });
+        async function deleteDriverData(driverId) {
+            //delete user from authentication  
+            var dataObject = {
+                "data": {
+                    "uid": driverId
+                }
+            };
+            var projectId = '<?php echo env('FIREBASE_PROJECT_ID'); ?>';
+            jQuery.ajax({
+                url: 'https://us-central1-' + projectId + '.cloudfunctions.net/deleteUser',
+                method: 'POST',
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify(dataObject),
+                success: function(data) {
+                    console.log('Delete user success:', data.result);
+                },
+                error: function(xhr, status, error) {
+                    var responseText = JSON.parse(xhr.responseText);
+                    console.log('Delete user error:', responseText.error);
+                }
+            });
+            await database.collection('wallet').where('user_id', '==', driverId).get().then(async function(snapshotsItem) {
+                if (snapshotsItem.docs.length > 0) {
+                    snapshotsItem.docs.forEach((temData) => {
+                        var item_data = temData.data();
+                        database.collection('wallet').doc(item_data.id).delete().then(function() {});
+                    });
+                }
+            });
+            await database.collection('driver_payouts').where('driverID', '==', driverId).get().then(async function(snapshotsItem) {
+                if (snapshotsItem.docs.length > 0) {
+                    snapshotsItem.docs.forEach((temData) => {
+                        var item_data = temData.data();
+                        database.collection('driver_payouts').doc(item_data.id).delete().then(function() {});
+                    });
+                }
+            });
+        }
+
+        function searchclear() {
+            jQuery("#search").val('');
+            searchtext();
+        }
+        
+        // Status Change Handler for Drivers
+        $(document).on("click", "a[name='driver-status-change']", async function(e) {
+            e.preventDefault();
+            var driverId = $(this).attr('driver_id');
+            var currentStatus = $(this).attr('approval_status') || 'waiting';
+            
+            var statusOptions = ['waiting', 'rejected', 'approved'];
+            var statusLabels = {
+                'waiting': 'Waiting',
+                'rejected': 'Rejected',
+                'approved': 'Approved'
+            };
+            
+            var currentIndex = statusOptions.indexOf(currentStatus);
+            var nextIndex = (currentIndex + 1) % statusOptions.length;
+            var nextStatus = statusOptions[nextIndex];
+            
+            if (!confirm('Change status from ' + statusLabels[currentStatus] + ' to ' + statusLabels[nextStatus] + '?')) {
+                return;
+            }
+            
+            jQuery("#data-table_processing").show();
+            
+            try {
+                if (database) {
+                    await database.collection('users').doc(driverId).update({
+                        'approvalStatus': nextStatus
+                    });
+                    alert('Status changed to ' + statusLabels[nextStatus]);
+                    if ($.fn.DataTable.isDataTable('#driverTable')) {
+                        $('#driverTable').DataTable().ajax.reload(null, false);
+                    }
+                }
+            } catch (error) {
+                console.error('❌ Error changing driver status:', error);
+                alert('Error changing status: ' + error.message);
+            } finally {
+                jQuery("#data-table_processing").hide();
+            }
+        });
+        
+        } // End of initDriversPage
+    </script>
+@endsection
+
+@section('styles')
+<style>
+    .status-dropdown-menu {
+        min-width: 180px;
+        padding: 5px 0;
+        margin: 2px 0 0;
+        background-color: #fff;
+        border: 1px solid rgba(0,0,0,.15);
+        border-radius: 4px;
+        box-shadow: 0 6px 12px rgba(0,0,0,.175);
+        z-index: 1000;
+    }
+    
+    .status-dropdown-menu li {
+        list-style: none;
+    }
+    
+    .status-dropdown-menu li a {
+        display: block;
+        padding: 8px 20px;
+        clear: both;
+        font-weight: normal;
+        line-height: 1.42857143;
+        color: #333;
+        white-space: nowrap;
+        text-decoration: none;
+    }
+    
+    .status-dropdown-menu li a:hover {
+        background-color: #f5f5f5;
+        color: #2c9653;
+    }
+    
+    .status-dropdown-menu li a .mdi {
+        margin-right: 8px;
+        font-size: 18px;
+        vertical-align: middle;
+    }
+    
+    .dropdown {
+        position: relative;
+        display: inline-block;
+    }
+    
+    .dropdown-toggle {
+        cursor: pointer;
+    }
+    
+    .dropdown-menu.show {
+        display: block;
+    }
+</style>
 @endsection

@@ -46,7 +46,7 @@
                                     <div class="form-group row width-50">
                                         <label class="col-3 control-label">{{ trans('lang.restaurant_name') }}</label>
                                         <div class="col-7">
-                                            <input type="text" class="form-control restaurant_name">
+                                            <input type="text" class="form-control restaurant_name" name="restaurant_name" id="restaurant_name" title="{{ trans('lang.restaurant_name') }}" placeholder="{{ trans('lang.restaurant_name') }}">
                                             <div class="form-text text-muted">
                                                 {{ trans('lang.restaurant_name_help') }}
                                             </div>
@@ -55,7 +55,7 @@
                                     <div class="form-group row width-50">
                                         <label class="col-3 control-label">{{ trans('lang.restaurant_cuisines') }}</label>
                                         <div class="col-7">
-                                            <select id='restaurant_cuisines' class="form-control chosen-select" multiple="multiple">
+                                            <select id='restaurant_cuisines' name="restaurant_cuisines" class="form-control chosen-select" multiple="multiple" title="{{ trans('lang.restaurant_cuisines') }}" aria-label="{{ trans('lang.restaurant_cuisines') }}">
                                                
                                             </select>
                                             <div class="form-text text-muted">
@@ -67,14 +67,14 @@
                                         <label class="col-3 control-label">{{ trans('lang.restaurant_phone') }}</label>
                                         <div class="col-md-12">
                                             <div class="phone-box position-relative">
-                                                <select name="country" id="country_selector1">
+                                                <select name="country" id="country_selector1" title="{{ trans('lang.country') }}" aria-label="{{ trans('lang.country') }}">
                                                     <?php foreach ($newcountries as $keycy => $valuecy) { ?>
                                                     <?php $selected = ''; ?>
                                                     <option <?php echo $selected; ?> code="<?php echo $valuecy->code; ?>" value="<?php echo $keycy; ?>">
                                                         +<?php echo $valuecy->phoneCode; ?> {{ $valuecy->countryName }}</option>
                                                     <?php } ?>
                                                 </select>
-                                                <input type="text" class="form-control restaurant_phone" disabled onkeypress="return chkAlphabets2(event,'error2')">
+                                                <input type="text" class="form-control restaurant_phone" name="restaurant_phone" id="restaurant_phone" disabled onkeypress="return chkAlphabets2(event,'error2')" title="{{ trans('lang.restaurant_phone') }}" placeholder="{{ trans('lang.restaurant_phone') }}" aria-label="{{ trans('lang.restaurant_phone') }}">
                                                 <div id="error2" class="err"></div>
                                             </div>
                                         </div>
@@ -85,7 +85,7 @@
                                     <div class="form-group row width-50">
                                         <label class="col-3 control-label">{{ trans('lang.restaurant_address') }}</label>
                                         <div class="col-7">
-                                            <input type="text" class="form-control restaurant_address">
+                                            <input type="text" class="form-control restaurant_address" name="restaurant_address" id="restaurant_address" title="{{ trans('lang.restaurant_address') }}" placeholder="{{ trans('lang.restaurant_address') }}" aria-label="{{ trans('lang.restaurant_address') }}">
                                             <div class="form-text text-muted">
                                                 {{ trans('lang.restaurant_address_help') }}
                                             </div>
@@ -94,7 +94,7 @@
                                     <div class="form-group row width-50">
                                         <label class="col-3 control-label">{{ trans('lang.zone') }}<span class="required-field"></span></label>
                                         <div class="col-7">
-                                            <select id='zone' class="form-control">
+                                            <select id='zone' name="zone" class="form-control" title="{{ trans('lang.zone') }}" aria-label="{{ trans('lang.zone') }}">
                                                 <option value="">{{ trans('lang.select_zone') }}</option>
                                             </select>
                                         </div>
@@ -102,7 +102,7 @@
                                     <div class="form-group row width-50">
                                         <label class="col-3 control-label">{{ trans('lang.restaurant_latitude') }}</label>
                                         <div class="col-7">
-                                            <input type="text" class="form-control restaurant_latitude">
+                                            <input type="text" class="form-control restaurant_latitude" name="restaurant_latitude" id="restaurant_latitude" title="{{ trans('lang.restaurant_latitude') }}" placeholder="{{ trans('lang.restaurant_latitude') }}" aria-label="{{ trans('lang.restaurant_latitude') }}">
                                             <div class="form-text text-muted">
                                                 {{ trans('lang.restaurant_latitude_help') }}
                                             </div>
@@ -114,7 +114,7 @@
                                     <div class="form-group row width-50">
                                         <label class="col-3 control-label">{{ trans('lang.restaurant_longitude') }}</label>
                                         <div class="col-7">
-                                            <input type="text" class="form-control restaurant_longitude">
+                                            <input type="text" class="form-control restaurant_longitude" name="restaurant_longitude" id="restaurant_longitude" title="{{ trans('lang.restaurant_longitude') }}" placeholder="{{ trans('lang.restaurant_longitude') }}" aria-label="{{ trans('lang.restaurant_longitude') }}">
                                             <div class="form-text text-muted">
                                                 {{ trans('lang.restaurant_longitude_help') }}
                                             </div>
@@ -123,7 +123,7 @@
                                     <div class="form-group row width-100">
                                         <label class="col-3 control-label ">{{ trans('lang.restaurant_description') }}</label>
                                         <div class="col-7">
-                                            <textarea rows="7" class="restaurant_description form-control" id="restaurant_description"></textarea>
+                                            <textarea rows="7" class="restaurant_description form-control" id="restaurant_description" name="restaurant_description" title="{{ trans('lang.restaurant_description') }}" placeholder="{{ trans('lang.restaurant_description') }}" aria-label="{{ trans('lang.restaurant_description') }}"></textarea>
                                         </div>
                                     </div>
                                     <!-- <div class="form-group row width-100">
@@ -131,7 +131,7 @@
                                                 <div class="col-7">
                                                     <input type="file" onChange="handleFileSelect(event,'photo')">
                                                     <div id="uploding_image"></div>
-                                                    <div class="uploaded_image" style="display:none;"><img id="uploaded_image" src="" width="150px" height="150px;">
+                                                    <div class="uploaded_image" style="display:none;"><img id="uploaded_image" src="" width="150px" height="150px;" alt="{{ trans('lang.restaurant_image') }}" title="{{ trans('lang.restaurant_image') }}">
                                                     </div>
                                                     <div class="form-text text-muted">
                                                         {{ trans('lang.restaurant_image_help') }}
@@ -144,7 +144,7 @@
                                     <div class="form-group row width-50">
                                         <label class="col-4 control-label">{{ trans('lang.commission_type') }}</label>
                                         <div class="col-7">
-                                            <select class="form-control commission_type" id="commission_type">
+                                            <select class="form-control commission_type" id="commission_type" name="commission_type" title="{{ trans('lang.commission_type') }}" aria-label="{{ trans('lang.commission_type') }}">
                                                 <option value="Percent">{{ trans('lang.coupon_percent') }}</option>
                                                 <option value="Fixed">{{ trans('lang.coupon_fixed') }}</option>
                                             </select>
@@ -153,7 +153,7 @@
                                     <div class="form-group row width-50">
                                         <label class="col-4 control-label">{{ trans('lang.admin_commission') }}</label>
                                         <div class="col-7">
-                                            <input type="number" value="0" class="form-control commission_fix">
+                                            <input type="number" value="0" class="form-control commission_fix" name="commission_fix" id="commission_fix" title="{{ trans('lang.admin_commission') }}" placeholder="{{ trans('lang.admin_commission') }}" aria-label="{{ trans('lang.admin_commission') }}">
                                         </div>
                                     </div>
                                 </fieldset>
@@ -750,6 +750,23 @@
         var id = "<?php echo $id; ?>";
         var rest_id = "<?php echo $id; ?>";
         var database = null;
+        
+        // Immediate validation of ID
+        console.log('🔍 [EDIT PAGE] ============================================');
+        console.log('🔍 [EDIT PAGE] PAGE LOADED - Initial Check');
+        console.log('🔍 [EDIT PAGE] ============================================');
+        console.log('🔍 [EDIT PAGE] Restaurant ID from PHP:', id);
+        console.log('🔍 [EDIT PAGE] ID type:', typeof id);
+        console.log('🔍 [EDIT PAGE] ID length:', id ? id.length : 0);
+        console.log('🔍 [EDIT PAGE] ID is empty?', !id || id === '');
+        if (!id || id === '') {
+            console.error('❌ [EDIT PAGE] CRITICAL ERROR: Restaurant ID is empty or undefined!');
+            console.error('❌ [EDIT PAGE] This will prevent data loading.');
+            toastr.error('Restaurant ID is missing. Please check the URL and refresh the page.');
+        } else {
+            console.log('✅ [EDIT PAGE] Restaurant ID is valid:', id);
+        }
+        console.log('🔍 [EDIT PAGE] ============================================');
         var ref_deliverycharge = null;
         var ref = null;
         var refData = null;
@@ -823,9 +840,10 @@
             storyRef = firebase.storage().ref('Story');
             storyImagesRef = firebase.storage().ref('Story/images');
             ref_deliverycharge = database.collection('settings').doc("DeliveryCharge");
-            ref = database.collection('vendors').where("id", "==", id);
+            // Use doc() instead of where() for direct document access
+            ref = database.collection('vendors').doc(id);
             refData = database.collection('users').where("vendorID", "==", id).where('role','==','vendor');
-            ref_charge = database.collection('vendors').where("id", "==", id);
+            ref_charge = database.collection('vendors').doc(id);
             selfDeliveryRef = database.collection('settings').doc("globalSettings");
             placeholder = database.collection('settings').doc('placeHolderImage');
             
@@ -975,29 +993,120 @@
             refCurrency.get().then(async function(snapshots) {
                 if (snapshots.docs.length > 0) {
                     var currencyData = snapshots.docs[0].data();
-                    currentCurrency = currencyData.symbol || '$';
+                    currentCurrency = '£'; // Force GBP
                     currencyAtRight = currencyData.symbolAtRight || false;
                 } else {
-                    currentCurrency = '$';
+                    currentCurrency = '£'; // Force GBP
                     currencyAtRight = false;
                 }
             }).catch(function(error) {
                 console.warn('Error loading currency:', error);
-                currentCurrency = '$';
+                    currentCurrency = '£'; // Force GBP
                 currencyAtRight = false;
             });
             
-            // Initialize page
-            initRestaurantEditPage();
+            // Initialize page after Firestore is ready and all settings are loaded
+            console.log('✅ [EDIT PAGE] Firestore ready, waiting for DOM and settings...');
+            console.log('✅ [EDIT PAGE] Restaurant ID:', id);
+            console.log('✅ [EDIT PAGE] Database:', !!database);
+            console.log('✅ [EDIT PAGE] Reference:', !!ref);
+            
+            // Ensure DOM is ready before initializing
+            if (document.readyState === 'loading') {
+                $(document).ready(function() {
+                    console.log('✅ [EDIT PAGE] DOM ready, initializing page...');
+                    setTimeout(function() {
+                        if (database && ref && id) {
+                            console.log('✅ [EDIT PAGE] All prerequisites ready, calling initRestaurantEditPage...');
+                            initRestaurantEditPage();
+                        } else {
+                            console.error('❌ [EDIT PAGE] Missing prerequisites:');
+                            console.error('   - Database:', !!database);
+                            console.error('   - Reference:', !!ref);
+                            console.error('   - ID:', id);
+                            console.warn('⚠️ [EDIT PAGE] Retrying in 1 second...');
+                            setTimeout(function() {
+                                if (database && ref && id) {
+                                    initRestaurantEditPage();
+                                } else {
+                                    toastr.error('Failed to initialize page. Please refresh.');
+                                }
+                            }, 1000);
+                        }
+                    }, 300);
+                });
+            } else {
+                // Document is already ready
+                console.log('✅ [EDIT PAGE] DOM already ready, initializing page...');
+                setTimeout(function() {
+                    if (database && ref && id) {
+                        console.log('✅ [EDIT PAGE] All prerequisites ready, calling initRestaurantEditPage...');
+                        initRestaurantEditPage();
+                    } else {
+                        console.error('❌ [EDIT PAGE] Missing prerequisites:');
+                        console.error('   - Database:', !!database);
+                        console.error('   - Reference:', !!ref);
+                        console.error('   - ID:', id);
+                        console.warn('⚠️ [EDIT PAGE] Retrying in 1 second...');
+                        setTimeout(function() {
+                            if (database && ref && id) {
+                                initRestaurantEditPage();
+                            } else {
+                                toastr.error('Failed to initialize page. Please refresh.');
+                            }
+                        }, 1000);
+                    }
+                }, 300);
+            }
         });
         
         function initRestaurantEditPage() {
+            console.log('🔄 [EDIT PAGE] ============================================');
+            console.log('🔄 [EDIT PAGE] initRestaurantEditPage called');
+            console.log('🔄 [EDIT PAGE] ID from PHP:', id);
+            console.log('🔄 [EDIT PAGE] Database available:', !!database);
+            console.log('🔄 [EDIT PAGE] Reference available:', !!ref);
+            console.log('🔄 [EDIT PAGE] ============================================');
+            
+            // Validate prerequisites
             if (!database) {
-                console.error('Database not available');
+                console.error('❌ [EDIT PAGE] Database not available');
+                console.error('❌ [EDIT PAGE] Waiting for Firestore to be ready...');
+                // Retry after a short delay
+                setTimeout(function() {
+                    if (database) {
+                        console.log('✅ [EDIT PAGE] Database now available, retrying...');
+                        initRestaurantEditPage();
+                    } else {
+                        console.error('❌ [EDIT PAGE] Database still not available after retry');
+                        toastr.error('Firestore database is not ready. Please refresh the page.');
+                    }
+                }, 1000);
                 return;
             }
             
-            $(document).ready(function() {
+            if (!id || id === '' || id === undefined || id === null) {
+                console.error('❌ [EDIT PAGE] Restaurant ID is missing or invalid:', id);
+                console.error('❌ [EDIT PAGE] ID type:', typeof id);
+                console.error('❌ [EDIT PAGE] ID value:', id);
+                toastr.error('Restaurant ID is missing. Please check the URL.');
+                return;
+            }
+            
+            // Ensure ref is created if it doesn't exist
+            if (!ref) {
+                console.warn('⚠️ [EDIT PAGE] Reference not found, creating new reference...');
+                if (database && id) {
+                    ref = database.collection('vendors').doc(id);
+                    console.log('✅ [EDIT PAGE] Reference created:', !!ref);
+                } else {
+                    console.error('❌ [EDIT PAGE] Cannot create reference - missing database or ID');
+                    toastr.error('Cannot create Firestore reference. Please refresh the page.');
+                    return;
+                }
+            }
+            
+            // Initialize select2 for country selector
             jQuery("#country_selector1").select2({
                 templateResult: formatState,
                 templateSelection: formatState2,
@@ -1041,31 +1150,262 @@
                 }
             });
             jQuery("#data-table_processing").show();
-            ref.get().then(async function(snapshots) {
+            console.log('🔄 [EDIT PAGE] ============================================');
+            console.log('🔄 [EDIT PAGE] Starting data loading process...');
+            console.log('🔄 [EDIT PAGE] Restaurant ID:', id);
+            var dbStatus = database ? 'Available' : 'NOT AVAILABLE';
+            console.log('🔄 [EDIT PAGE] Database instance:', dbStatus);
+            var refStatus = ref ? 'Available' : 'NOT AVAILABLE';
+            console.log('🔄 [EDIT PAGE] Reference object:', refStatus);
+            var refPath = ref ? ref.path : 'N/A';
+            console.log('🔄 [EDIT PAGE] Reference path:', refPath);
+            console.log('🔄 [EDIT PAGE] ============================================');
+            
+            // Validate prerequisites
+            if (!database) {
+                console.error('❌ [EDIT PAGE] CRITICAL: Database is not initialized!');
+                console.error('❌ [EDIT PAGE] Cannot proceed without database instance.');
+                jQuery("#data-table_processing").hide();
+                toastr.error('Database not initialized. Please refresh the page.');
+                return;
+            }
+            
+            if (!ref) {
+                console.error('❌ [EDIT PAGE] CRITICAL: Reference is not initialized!');
+                console.error('❌ [EDIT PAGE] Cannot proceed without Firestore reference.');
+                jQuery("#data-table_processing").hide();
+                toastr.error('Firestore reference not initialized. Please refresh the page.');
+                return;
+            }
+            
+            if (!id || id === '') {
+                console.error('❌ [EDIT PAGE] CRITICAL: Restaurant ID is empty!');
+                console.error('❌ [EDIT PAGE] Cannot fetch restaurant without ID.');
+                jQuery("#data-table_processing").hide();
+                toastr.error('Restaurant ID is missing. Please check the URL.');
+                return;
+            }
+            
+            console.log('🔄 [EDIT PAGE] Attempting to fetch document from Firestore...');
+            console.log('🔄 [EDIT PAGE] Collection: vendors');
+            console.log('🔄 [EDIT PAGE] Document ID:', id);
+            console.log('🔄 [EDIT PAGE] Reference type:', typeof ref);
+            console.log('🔄 [EDIT PAGE] Reference has get method:', typeof ref.get === 'function');
+            
+            // Ensure ref.get is called
+            if (typeof ref.get !== 'function') {
+                console.error('❌ [EDIT PAGE] CRITICAL: ref.get is not a function!');
+                console.error('❌ [EDIT PAGE] Reference object:', ref);
+                jQuery("#data-table_processing").hide();
+                toastr.error('Firestore reference is invalid. Please refresh the page.');
+                return;
+            }
+            
+            console.log('🔄 [EDIT PAGE] Calling ref.get() now...');
+            ref.get().then(async function(docSnapshot) {
+                console.log('✅ [EDIT PAGE] ref.get() promise resolved!');
+                console.log('🔄 [EDIT PAGE] ============================================');
+                console.log('🔄 [EDIT PAGE] Firestore query completed');
+                var snapshotStatus = docSnapshot ? 'Yes' : 'No';
+                console.log('🔄 [EDIT PAGE] Document snapshot received:', snapshotStatus);
+                
                 try {
-                    if (!snapshots || !snapshots.docs || snapshots.docs.length <= 0) {
+                    if (!docSnapshot) {
+                        console.error('❌ [EDIT PAGE] CRITICAL: Document snapshot is null!');
+                        console.error('❌ [EDIT PAGE] This means the query returned no result.');
+                        console.error('❌ [EDIT PAGE] Possible causes:');
+                        console.error('   1. Document does not exist in Firestore');
+                        console.error('   2. Permission denied (check Firestore rules)');
+                        console.error('   3. Network error');
+                        console.error('   4. Invalid document ID');
                         jQuery("#data-table_processing").hide();
+                        toastr.error('Restaurant not found! Please check the restaurant ID.');
                         return false;
                     }
-                    var restaurant = snapshots.docs[0].data();
+                    
+                    if (!docSnapshot.exists) {
+                        console.error('❌ [EDIT PAGE] CRITICAL: Document does not exist!');
+                        console.error('❌ [EDIT PAGE] Document ID:', id);
+                        console.error('❌ [EDIT PAGE] Document exists:', false);
+                        console.error('❌ [EDIT PAGE] This restaurant ID does not exist in Firestore.');
+                        console.error('❌ [EDIT PAGE] Please verify the ID in Firestore console.');
+                        jQuery("#data-table_processing").hide();
+                        toastr.error('Restaurant not found! Please check the restaurant ID.');
+                        return false;
+                    }
+                    
+                    console.log('✅ [EDIT PAGE] Document exists: YES');
+                    console.log('✅ [EDIT PAGE] Document ID:', docSnapshot.id);
+                    console.log('🔄 [EDIT PAGE] Extracting document data...');
+                    
+                    var restaurant = docSnapshot.data();
+                    if (!restaurant) {
+                        console.error('❌ [EDIT PAGE] CRITICAL: Document data is null!');
+                        console.error('❌ [EDIT PAGE] Document exists but has no data.');
+                        jQuery("#data-table_processing").hide();
+                        toastr.error('Restaurant data is empty!');
+                        return false;
+                    }
+                    
+                    restaurant.id = docSnapshot.id; // Ensure ID is in data
+                    console.log('✅ [EDIT PAGE] Restaurant data extracted successfully!');
+                    console.log('📋 [EDIT PAGE] ============================================');
+                    console.log('📋 [EDIT PAGE] RESTAURANT DATA SUMMARY:');
+                    console.log('📋 [EDIT PAGE] Document ID:', restaurant.id);
+                    var titleValue = restaurant.title || 'N/A (MISSING!)';
+                    console.log('📋 [EDIT PAGE] Title:', titleValue);
+                    var zoneIdValue = restaurant.zoneId || 'N/A (MISSING!)';
+                    console.log('📋 [EDIT PAGE] Zone ID:', zoneIdValue);
+                    var phoneValue = restaurant.phonenumber || 'N/A (MISSING!)';
+                    console.log('📋 [EDIT PAGE] Phone:', phoneValue);
+                    var locationValue = restaurant.location || 'N/A (MISSING!)';
+                    console.log('📋 [EDIT PAGE] Location:', locationValue);
+                    var latitudeValue = restaurant.latitude || 'N/A (MISSING!)';
+                    console.log('📋 [EDIT PAGE] Latitude:', latitudeValue);
+                    var longitudeValue = restaurant.longitude || 'N/A (MISSING!)';
+                    console.log('📋 [EDIT PAGE] Longitude:', longitudeValue);
+                    var descriptionStatus = restaurant.description ? 'Present' : 'MISSING!';
+                    console.log('📋 [EDIT PAGE] Description:', descriptionStatus);
+                    var countryCodeValue = restaurant.countryCode || 'N/A (MISSING!)';
+                    console.log('📋 [EDIT PAGE] Country Code:', countryCodeValue);
+                    var photosInfo = restaurant.photos ? '(' + restaurant.photos.length + ' photos)' : '(NO PHOTOS)';
+                    console.log('📋 [EDIT PAGE] Has Photos:', !!restaurant.photos, photosInfo);
+                    var menuPhotosInfo = restaurant.restaurantMenuPhotos ? '(' + restaurant.restaurantMenuPhotos.length + ' photos)' : '(NO PHOTOS)';
+                    console.log('📋 [EDIT PAGE] Has Menu Photos:', !!restaurant.restaurantMenuPhotos, menuPhotosInfo);
+                    var workingHoursInfo = restaurant.workingHours ? '(' + restaurant.workingHours.length + ' days)' : '(NO WORKING HOURS)';
+                    console.log('📋 [EDIT PAGE] Has Working Hours:', !!restaurant.workingHours, workingHoursInfo);
+                    var specialDiscountInfo = restaurant.specialDiscount ? '(' + restaurant.specialDiscount.length + ' days)' : '(NO SPECIAL DISCOUNTS)';
+                    console.log('📋 [EDIT PAGE] Has Special Discount:', !!restaurant.specialDiscount, specialDiscountInfo);
+                    console.log('📋 [EDIT PAGE] Has Admin Commission:', !!restaurant.adminCommission);
+                    var categoryInfo = restaurant.categoryID ? '(' + restaurant.categoryID.length + ' categories)' : '(NO CATEGORIES)';
+                    console.log('📋 [EDIT PAGE] Has Category ID:', !!restaurant.categoryID, categoryInfo);
+                    console.log('📋 [EDIT PAGE] Has Filters:', !!restaurant.filters);
+                    console.log('📋 [EDIT PAGE] ============================================');
+                    
+                    // Print ALL restaurant data to console
+                    console.log('📊 [EDIT PAGE] ============================================');
+                    console.log('📊 [EDIT PAGE] COMPLETE RESTAURANT DATA:');
+                    console.log('📊 [EDIT PAGE] ============================================');
+                    try {
+                        console.log('📊 [EDIT PAGE] Full Restaurant Object:', JSON.stringify(restaurant, null, 2));
+                    } catch (e) {
+                        console.log('📊 [EDIT PAGE] Full Restaurant Object (direct):', restaurant);
+                    }
+                    console.log('📊 [EDIT PAGE] ============================================');
+                    console.log('📊 [EDIT PAGE] Individual Fields:');
+                    console.log('📊 [EDIT PAGE] - id:', restaurant.id);
+                    console.log('📊 [EDIT PAGE] - title:', restaurant.title);
+                    console.log('📊 [EDIT PAGE] - phonenumber:', restaurant.phonenumber);
+                    console.log('📊 [EDIT PAGE] - countryCode:', restaurant.countryCode);
+                    console.log('📊 [EDIT PAGE] - location:', restaurant.location);
+                    console.log('📊 [EDIT PAGE] - latitude:', restaurant.latitude);
+                    console.log('📊 [EDIT PAGE] - longitude:', restaurant.longitude);
+                    console.log('📊 [EDIT PAGE] - description:', restaurant.description);
+                    console.log('📊 [EDIT PAGE] - zoneId:', restaurant.zoneId);
+                    console.log('📊 [EDIT PAGE] - categoryID:', restaurant.categoryID);
+                    console.log('📊 [EDIT PAGE] ============================================');
+                    
+                    // Show success message
+                    toastr.success('Restaurant data loaded successfully!', 'Success', {
+                        timeOut: 2000
+                    });
+                    // Load Country Code
                     if (restaurant.countryCode != "" && restaurant.countryCode != null) {
                         $('#country_selector1').val(restaurant.countryCode).trigger('change');
+                        console.log('✅ [EDIT PAGE] Country code loaded:', restaurant.countryCode);
                     }
                     if (restaurant.phonenumber != "" && restaurant.phonenumber != null) {
                         $(".restaurant_phone").val(shortEditNumber(restaurant.phonenumber));
                     }
+                    // Load Restaurant Name
+                    console.log('🔄 [EDIT PAGE] Attempting to load restaurant name...');
+                    console.log('🔄 [EDIT PAGE] Restaurant title from data:', restaurant.title);
+                    console.log('🔄 [EDIT PAGE] Restaurant name field exists:', $(".restaurant_name").length > 0);
+                    if (restaurant.title) {
+                        if ($(".restaurant_name").length > 0) {
                     $(".restaurant_name").val(restaurant.title);
-                    if (restaurant.filters) {
-                        $(".restaurant_cuisines").val(restaurant.filters.Cuisine);
+                            console.log('✅ [EDIT PAGE] Restaurant name loaded:', restaurant.title);
+                            var nameValue = $(".restaurant_name").val();
+                            console.log('✅ [EDIT PAGE] Restaurant name field value after set:', nameValue);
+                            if (!nameValue || nameValue === '') {
+                                console.error('❌ [EDIT PAGE] CRITICAL: Restaurant name field is empty after setting value!');
+                                // Force set value using attr
+                                $(".restaurant_name").attr('value', restaurant.title);
+                                console.log('✅ [EDIT PAGE] Restaurant name set using attr:', $(".restaurant_name").attr('value'));
+                            }
+                        } else {
+                            console.error('❌ [EDIT PAGE] Restaurant name field not found in DOM!');
+                        }
+                    } else {
+                        console.warn('⚠️ [EDIT PAGE] Restaurant title is missing!');
                     }
+                    
+                    // Load Address
+                    console.log('🔄 [EDIT PAGE] Attempting to load restaurant address...');
+                    console.log('🔄 [EDIT PAGE] Restaurant location from data:', restaurant.location);
+                    console.log('🔄 [EDIT PAGE] Restaurant address field exists:', $(".restaurant_address").length > 0);
+                    if (restaurant.location) {
+                        if ($(".restaurant_address").length > 0) {
                     $(".restaurant_address").val(restaurant.location);
+                            console.log('✅ [EDIT PAGE] Address loaded:', restaurant.location);
+                            var addressValue = $(".restaurant_address").val();
+                            console.log('✅ [EDIT PAGE] Address field value after set:', addressValue);
+                            if (!addressValue || addressValue === '') {
+                                console.error('❌ [EDIT PAGE] CRITICAL: Address field is empty after setting value!');
+                                // Force set value using attr
+                                $(".restaurant_address").attr('value', restaurant.location);
+                                console.log('✅ [EDIT PAGE] Address set using attr:', $(".restaurant_address").attr('value'));
+                            }
+                        } else {
+                            console.error('❌ [EDIT PAGE] Address field not found in DOM!');
+                        }
+                    } else {
+                        console.warn('⚠️ [EDIT PAGE] Restaurant location is missing!');
+                    }
+                    
+                    // Note: Cuisines will be loaded later after categories dropdown is populated
                     if (restaurant.adminCommission) {
                         $("#commission_type").val(restaurant.adminCommission.commissionType);
                         $(".commission_fix").val(restaurant.adminCommission.fix_commission);
                     }
+                    // Load Latitude
+                    if (restaurant.latitude) {
+                        if ($(".restaurant_latitude").length > 0) {
                     $(".restaurant_latitude").val(restaurant.latitude);
+                            console.log('✅ [EDIT PAGE] Latitude loaded:', restaurant.latitude);
+                            console.log('✅ [EDIT PAGE] Latitude field value after set:', $(".restaurant_latitude").val());
+                        } else {
+                            console.error('❌ [EDIT PAGE] Latitude field not found in DOM!');
+                        }
+                    } else {
+                        console.warn('⚠️ [EDIT PAGE] Restaurant latitude is missing!');
+                    }
+                    
+                    // Load Longitude
+                    if (restaurant.longitude) {
+                        if ($(".restaurant_longitude").length > 0) {
                     $(".restaurant_longitude").val(restaurant.longitude);
+                            console.log('✅ [EDIT PAGE] Longitude loaded:', restaurant.longitude);
+                            console.log('✅ [EDIT PAGE] Longitude field value after set:', $(".restaurant_longitude").val());
+                        } else {
+                            console.error('❌ [EDIT PAGE] Longitude field not found in DOM!');
+                        }
+                    } else {
+                        console.warn('⚠️ [EDIT PAGE] Restaurant longitude is missing!');
+                    }
+                    
+                    // Load Description
+                    if (restaurant.description) {
+                        if ($(".restaurant_description").length > 0) {
                     $(".restaurant_description").val(restaurant.description);
+                            console.log('✅ [EDIT PAGE] Description loaded');
+                            console.log('✅ [EDIT PAGE] Description field value after set:', $(".restaurant_description").val());
+                        } else {
+                            console.error('❌ [EDIT PAGE] Description field not found in DOM!');
+                        }
+                    } else {
+                        console.warn('⚠️ [EDIT PAGE] Restaurant description is missing!');
+                    }
                     if (restaurant.photo) {
                         if (restaurant.photo != '' && restaurant.photo != null) {
                             restaurantPhoto = restaurant.photo;
@@ -1232,8 +1572,8 @@
                     if (Array.isArray(restaurant.photos)) {
                         restaurant.photos.forEach((photo) => {
                             photocount++;
-                            photos = photos + '<span class="image-item" id="photo_' + photocount + '"><span class="remove-btn" data-id="' + photocount + '" data-img="' + photo + '" data-status="old"><i class="fa fa-remove"></i></span><img width="100px" id="" height="auto" src="' + photo + '"></span>';
-                        })
+                            photos = photos + '<span class="image-item" id="photo_' + photocount + '"><span class="remove-btn" data-id="' + photocount + '" data-img="' + photo + '" data-status="old"><i class="fa fa-remove"></i></span><img width="100px" id="" height="auto" src="' + photo + '" alt="Restaurant Photo ' + photocount + '" title="Restaurant Photo"></span>';
+                        });
                     }
                     if (photos) {
                         $("#photos").html(photos);
@@ -1244,8 +1584,8 @@
                         restaurant_menu_photos = restaurant.restaurantMenuPhotos;
                         restaurant.restaurantMenuPhotos.forEach((photo) => {
                             menuPhotoCount++;
-                            menuCardPhotos = menuCardPhotos + '<span class="image-item" id="photo_menu_' + menuPhotoCount + '"><span class="remove-menu-btn" data-id="' + menuPhotoCount + '" data-img="' + photo + '" data-status="old"><i class="fa fa-remove"></i></span><img width="100px" id="" height="auto" src="' + photo + '"></span>';
-                        })
+                            menuCardPhotos = menuCardPhotos + '<span class="image-item" id="photo_menu_' + menuPhotoCount + '"><span class="remove-menu-btn" data-id="' + menuPhotoCount + '" data-img="' + photo + '" data-status="old"><i class="fa fa-remove"></i></span><img width="100px" id="" height="auto" src="' + photo + '" alt="Menu Card Photo ' + menuPhotoCount + '" title="Menu Card Photo"></span>';
+                        });
                     }
                     if (menuCardPhotos) {
                         $("#photos_menu_card").html(menuCardPhotos);
@@ -1262,31 +1602,60 @@
                         route1 = route1.replace(':id', restaurant.author);
                         $('.profileRoute').attr('href', route1);
                     }
-                    var selected_category=[];
+                    var selected_category = [];
                     
+                    // Get selected categories from restaurant data
                     if (restaurant.hasOwnProperty('categoryID') && restaurant.categoryID != null && restaurant.categoryID != '' && restaurant.categoryID.length > 0) {
+                        if (Array.isArray(restaurant.categoryID)) {
                         $.each(restaurant.categoryID, function(index, catId) {
                             selected_category.push(catId);
                         });
+                        } else {
+                            selected_category.push(restaurant.categoryID);
+                        }
+                        console.log('✅ [EDIT PAGE] Selected categories from categoryID:', selected_category);
+                    } else if (restaurant.filters && restaurant.filters.Cuisine) {
+                        // Fallback to filters.Cuisine if categoryID not available
+                        var restaurantCuisines = restaurant.filters.Cuisine;
+                        if (Array.isArray(restaurantCuisines)) {
+                            selected_category = restaurantCuisines;
+                        } else {
+                            selected_category = [restaurantCuisines];
+                        }
+                        console.log('✅ [EDIT PAGE] Using cuisines from filters.Cuisine:', selected_category);
                     }
                     
+                    // Load Cuisines dropdown
                     await database.collection('vendor_categories').where('publish', '==', true).get().then(async function(snapshots) {
+                        $('#restaurant_cuisines').empty(); // Clear existing options
+                        
                         snapshots.docs.forEach((listval) => {
                             var data = listval.data();
                             var selected = '';
                             if ($.inArray(data.id, selected_category) !== -1) {
-                                var selected ='selected="selected"';
+                                selected = 'selected="selected"';
                             }
                             var option = '<option value="' + data.id + '" ' + selected + '>' + data.title + '</option>';
                             $('#restaurant_cuisines').append(option);
+                        });
                            
-                        })
+                        // Initialize chosen after options are added
                           $("#restaurant_cuisines").show().chosen({
                                 "placeholder_text": "{{ trans('lang.select_cuisines') }}"
                          });
+                        
+                        // Trigger update to show selected values
+                        $("#restaurant_cuisines").trigger("chosen:updated");
+                        var categoriesCount = snapshots.docs.length;
+                        console.log('✅ [EDIT PAGE] Cuisines dropdown loaded with', categoriesCount, 'categories');
+                    }).catch(function(error) {
+                        console.error('❌ [EDIT PAGE] Error loading cuisines:', error);
                     });
-                    if (restaurant.hasOwnProperty('phonenumber')) {
+                    
+                    // Load Phone Number (ensure it's set after country code is loaded)
+                    if (restaurant.hasOwnProperty('phonenumber') && restaurant.phonenumber) {
                         $(".restaurant_phone").val(shortEditNumber(restaurant.phonenumber));
+                        console.log('✅ [EDIT PAGE] Phone number loaded');
                     }
                     ref_deliverycharge.get().then(async function(snapshots_charge) {
                         var deliveryChargeSettings = snapshots_charge.data();
@@ -1315,18 +1684,155 @@
                         jQuery("#story_vedios").append(html);
                     }
                     if (story_thumbnail) {
-                        html = '<div class="col-md-3"><div class="thumbnail-inner"><span class="remove-story-thumbnail" data-img="' + story_thumbnail + '"><i class="fa fa-remove"></i></span><img id="story_thumbnail_image" src="' + story_thumbnail + '" width="150px" height="150px;"></div></div>';
+                        html = '<div class="col-md-3"><div class="thumbnail-inner"><span class="remove-story-thumbnail" data-img="' + story_thumbnail + '"><i class="fa fa-remove"></i></span><img id="story_thumbnail_image" src="' + story_thumbnail + '" width="150px" height="150px;" alt="Story Thumbnail" title="Story Thumbnail"></div></div>';
                         jQuery("#story_thumbnail").html(html);
                     }
-                } catch (error) {}
-                if (restaurant.hasOwnProperty('zoneId') && restaurant.zoneId != '') {
-                    $("#zone").val(restaurant.zoneId);
-                }
+                    
+                    // Load Zone
+                    if (restaurant.hasOwnProperty('zoneId') && restaurant.zoneId != '' && restaurant.zoneId != null) {
+                        $("#zone").val(restaurant.zoneId).trigger('change');
+                        console.log('✅ [EDIT PAGE] Zone selected:', restaurant.zoneId);
+                    }
+                    
+                    // Load Self Delivery
                 if (restaurant.hasOwnProperty('isSelfDelivery') && restaurant.isSelfDelivery != null && restaurant.isSelfDelivery != '' && restaurant.isSelfDelivery) {
                     $('#enable_self_delivery').prop('checked', true);
-                }
+                        console.log('✅ [EDIT PAGE] Self Delivery enabled');
+                    }
+                    
+                    // Load GST if exists (DND Settings)
+                    if (restaurant.hasOwnProperty('gst') && restaurant.gst != null && restaurant.gst != '') {
+                        if ($("#gst").length) {
+                            $("#gst").val(restaurant.gst);
+                            console.log('✅ [EDIT PAGE] GST loaded:', restaurant.gst);
+                        }
+                    }
+                    
+                    // Load DND settings if exists
+                    if (restaurant.hasOwnProperty('enableDND') && restaurant.enableDND) {
+                        if ($("#enable_dnd").length) {
+                            $("#enable_dnd").prop('checked', true);
+                            console.log('✅ [EDIT PAGE] DND enabled');
+                        }
+                    }
+                    
+                    // Ensure all sections are visible if they have data
+                    if (restaurant.hasOwnProperty('workingHours') && restaurant.workingHours && restaurant.workingHours.length > 0) {
+                        $('.working_hours_div').css('display', 'block');
+                    }
+                    if (restaurant.hasOwnProperty('specialDiscount') && restaurant.specialDiscount && restaurant.specialDiscount.length > 0) {
+                        $('.special_offer_div').css('display', 'block');
+                    }
+                    if (restaurant.hasOwnProperty('restaurantMenuPhotos') && restaurant.restaurantMenuPhotos && restaurant.restaurantMenuPhotos.length > 0) {
+                        $('.divein_div').css('display', 'block');
+                    }
+                    
+                    console.log('✅ [EDIT PAGE] ============================================');
+                    console.log('✅ [EDIT PAGE] All data loaded and displayed successfully!');
+                    console.log('✅ [EDIT PAGE] ============================================');
+                    console.log('✅ [EDIT PAGE] Verifying field values:');
+                    console.log('✅ [EDIT PAGE] - Restaurant Name field:', $(".restaurant_name").val() || 'EMPTY');
+                    console.log('✅ [EDIT PAGE] - Address field:', $(".restaurant_address").val() || 'EMPTY');
+                    console.log('✅ [EDIT PAGE] - Latitude field:', $(".restaurant_latitude").val() || 'EMPTY');
+                    console.log('✅ [EDIT PAGE] - Longitude field:', $(".restaurant_longitude").val() || 'EMPTY');
+                    console.log('✅ [EDIT PAGE] - Description field:', $(".restaurant_description").val() || 'EMPTY');
+                    console.log('✅ [EDIT PAGE] - Phone field:', $(".restaurant_phone").val() || 'EMPTY');
+                    console.log('✅ [EDIT PAGE] - Zone field:', $("#zone").val() || 'EMPTY');
+                    console.log('✅ [EDIT PAGE] ============================================');
+                    
+                    // Force update all fields to ensure they're visible
+                    if (restaurant.title && $(".restaurant_name").length > 0) {
+                        $(".restaurant_name").val(restaurant.title).trigger('input').trigger('change');
+                    }
+                    if (restaurant.location && $(".restaurant_address").length > 0) {
+                        $(".restaurant_address").val(restaurant.location).trigger('input').trigger('change');
+                    }
+                    if (restaurant.latitude && $(".restaurant_latitude").length > 0) {
+                        $(".restaurant_latitude").val(restaurant.latitude).trigger('input').trigger('change');
+                    }
+                    if (restaurant.longitude && $(".restaurant_longitude").length > 0) {
+                        $(".restaurant_longitude").val(restaurant.longitude).trigger('input').trigger('change');
+                    }
+                    if (restaurant.description && $(".restaurant_description").length > 0) {
+                        $(".restaurant_description").val(restaurant.description).trigger('input').trigger('change');
+                    }
+                    
                 jQuery("#data-table_processing").hide();
-            })
+                    
+                    // Show success notification
+                    toastr.success('Restaurant data loaded and ready for editing!', 'Success', {
+                        timeOut: 3000
+                    });
+                    
+                    // Smooth scroll to top
+                    $('html, body').animate({
+                        scrollTop: 0
+                    }, 500);
+                } catch (error) {
+                    console.error('❌ [EDIT PAGE] ============================================');
+                    console.error('❌ [EDIT PAGE] CRITICAL ERROR in data processing!');
+                    var errorNameValue = error.name || 'Unknown';
+                    console.error('❌ [EDIT PAGE] Error Name:', errorNameValue);
+                    var errorMessageValue = error.message || 'No message';
+                    console.error('❌ [EDIT PAGE] Error Message:', errorMessageValue);
+                    var errorCodeValue = error.code || 'No code';
+                    console.error('❌ [EDIT PAGE] Error Code:', errorCodeValue);
+                    var errorStackValue = error.stack || 'No stack trace';
+                    console.error('❌ [EDIT PAGE] Error Stack:', errorStackValue);
+                    console.error('❌ [EDIT PAGE] ============================================');
+                    console.error('❌ [EDIT PAGE] This error occurred while processing restaurant data.');
+                    console.error('❌ [EDIT PAGE] Possible causes:');
+                    console.error('   1. Invalid data structure in Firestore');
+                    console.error('   2. Missing required fields');
+                    console.error('   3. Type mismatch (e.g., string vs number)');
+                    console.error('   4. JavaScript syntax error in data processing');
+                    console.error('❌ [EDIT PAGE] ============================================');
+                    jQuery("#data-table_processing").hide();
+                    toastr.error('Error loading restaurant data: ' + (error.message || 'Unknown error'));
+                }
+            }).catch(function(error) {
+                console.error('❌ [EDIT PAGE] ============================================');
+                console.error('❌ [EDIT PAGE] CRITICAL: Firestore query failed!');
+                var errorCodeValue = error.code || 'No code';
+                console.error('❌ [EDIT PAGE] Error Code:', errorCodeValue);
+                var errorMessageValue = error.message || 'No message';
+                console.error('❌ [EDIT PAGE] Error Message:', errorMessageValue);
+                var errorNameValue = error.name || 'Unknown';
+                console.error('❌ [EDIT PAGE] Error Name:', errorNameValue);
+                console.error('❌ [EDIT PAGE] ============================================');
+                console.error('❌ [EDIT PAGE] This error occurred while fetching from Firestore.');
+                console.error('❌ [EDIT PAGE] Possible causes:');
+                
+                if (error.code === 'permission-denied') {
+                    console.error('   → PERMISSION DENIED: Firestore security rules are blocking access');
+                    console.error('   → Solution: Update Firestore rules to allow read access');
+                    console.error('   → Check: firestore.rules file');
+                    toastr.error('Permission denied! Check Firestore rules.');
+                } else if (error.code === 'not-found') {
+                    console.error('   → NOT FOUND: Document does not exist in Firestore');
+                    console.error('   → Solution: Verify the restaurant ID exists in Firestore');
+                    console.error('   → Check: Firestore Console > vendors collection');
+                    toastr.error('Restaurant not found in database!');
+                } else if (error.code === 'unavailable') {
+                    console.error('   → UNAVAILABLE: Firestore service is unavailable');
+                    console.error('   → Solution: Check internet connection and Firebase status');
+                    toastr.error('Firestore service unavailable. Check your connection.');
+                } else if (error.code === 'deadline-exceeded') {
+                    console.error('   → TIMEOUT: Request took too long');
+                    console.error('   → Solution: Check network connection and try again');
+                    toastr.error('Request timeout. Please try again.');
+                } else {
+                    var unknownErrorMsg = error.message || 'No details available';
+                    console.error('   → UNKNOWN ERROR: ' + unknownErrorMsg);
+                    console.error('   → Solution: Check browser console for more details');
+                    var finalErrorMsg = error.message || 'Unknown error';
+                    toastr.error('Error loading restaurant: ' + finalErrorMsg);
+                }
+                console.error('❌ [EDIT PAGE] ============================================');
+                jQuery("#data-table_processing").hide();
+            });
+        } // End of initRestaurantEditPage function
+        
             async function getRestaurantStory(restaurantId) {
                 await database.collection('story').where('vendorID', '==', restaurantId).get().then(async function(snapshots) {
                     if (snapshots.docs.length > 0) {
@@ -1337,6 +1843,7 @@
                     }
                 });
             }
+        } // End of initRestaurantEditPage function
 
             function checkLocationInZone(area, address_lng, address_lat) {
                 var vertices_x = [];
@@ -1692,8 +2199,8 @@
                         window.scrollTo(0, 0);
                     });
                 }
-            })
-        })
+            });
+        }); // End of $(document).ready
 
         function handleStoryFileSelect(evt) {
             var rests = ["0CwIcsoYhSxYba9DlwuE", "NjYpnm5IhQi0GeeVKXiX", "NjYpnm5IhQi0GeeVKXiX", "XrDAfl3rOWZS11lEIPkI", "a4rYm0HQHskPDGXAlWEt", "wkSUMpzIxl6KmDIKuDVQ"];
@@ -1775,7 +2282,7 @@
                         } else {
                             console.log('Bucket not matched');
                         }
-                    })
+                    });
                     .catch((error) => {
                         if (error.code === 'storage/object-not-found') {
                             console.log("File does not exist");
@@ -2130,7 +2637,7 @@
                 alert("{{ trans('lang.special_offer_disabled') }}");
                 return false;
             }
-        })
+        });
         var countAddButton = 1;
 
         function addMoreButton(day, day2, count) {
@@ -2454,7 +2961,7 @@
         }
         $(".add_working_hours_restaurant_btn").click(function() {
             $(".working_hours_div").show();
-        })
+        });
         var countAddhours = 1;
 
         function addMorehour(day, day2, count) {

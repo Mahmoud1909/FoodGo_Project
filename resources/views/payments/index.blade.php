@@ -146,7 +146,7 @@
     var refCurrency = database.collection('currencies').where('isActive', '==', true);
     refCurrency.get().then(async function (snapshots) {
         var currencyData = snapshots.docs[0].data();
-        currentCurrency = currencyData.symbol;
+        currentCurrency = '£'; // Force GBP
         currencyAtRight = currencyData.symbolAtRight;
         if (currencyData.decimal_degits) {
             decimal_degits = currencyData.decimal_degits;
@@ -177,6 +177,12 @@
             ],
             fileName: "{{trans('lang.payment_plural')}}",
         };
+        
+        // Check if DataTable is already initialized and destroy it
+        if ($.fn.DataTable.isDataTable('#paymentTable')) {
+            $('#paymentTable').DataTable().destroy();
+        }
+        
         const table = $('#paymentTable').DataTable({
             pageLength: 10, // Number of rows per page
             processing: false, // Show processing indicator

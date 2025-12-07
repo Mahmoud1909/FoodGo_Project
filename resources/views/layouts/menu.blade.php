@@ -24,7 +24,7 @@
 <nav class="sidebar-nav">
     <ul id="sidebarnav">
         <li>
-            <a class="waves-effect waves-dark" href="{!! url('dashboard') !!}" aria-expanded="false">
+            <a class="waves-effect waves-dark" href="{!! url('dashboard') !!}">
                 <i class="mdi mdi-home"></i>
                 <span class="hide-menu">{{ trans('lang.dashboard') }}</span>
             </a>
@@ -34,7 +34,7 @@
         @endif
         @if (in_array('god-eye', $role_has_permission))
             <li>
-                <a class="waves-effect waves-dark" href="{!! url('map') !!}" aria-expanded="false">
+                <a class="waves-effect waves-dark" href="{!! url('map') !!}">
                     <i class="mdi mdi-home-map-marker"></i>
                     <span class="hide-menu">{{ trans('lang.god_eye') }}</span>
                 </a>
@@ -42,7 +42,7 @@
         @endif
         @if (in_array('zone', $role_has_permission))
             <li>
-                <a class="waves-effect waves-dark" href="{!! url('zone') !!}" aria-expanded="false">
+                <a class="waves-effect waves-dark" href="{!! url('zone') !!}">
                     <i class="mdi mdi-map-marker-circle"></i>
                     <span class="hide-menu">{{ trans('lang.zone') }}</span>
                 </a>
@@ -50,11 +50,11 @@
         @endif
         @if (in_array('admins', $role_has_permission) || in_array('roles', $role_has_permission))
             <li class="nav-subtitle"><span class="nav-subtitle-span">{{ trans('lang.access_management') }}</span></li>
-            <li><a class="has-arrow waves-effect waves-dark" href="#" aria-expanded="false">
+            <li><a class="has-arrow waves-effect waves-dark" href="#">
                     <i class="mdi mdi-lock-outline"></i>
                     <span class="hide-menu">{{ trans('lang.access_control') }}</span>
                 </a>
-                <ul aria-expanded="false" class="collapse">
+                <ul class="collapse">
                     @if (in_array('roles', $role_has_permission))
                         <li><a href="{!! url('role') !!}">{{ trans('lang.role_plural') }}</a></li>
                     @endif
@@ -69,7 +69,7 @@
         @endif
         @if (in_array('users', $role_has_permission))
             <li>
-                <a class="waves-effect waves-dark" href="{!! url('users') !!}" aria-expanded="false">
+                <a class="waves-effect waves-dark" href="{!! url('users') !!}">
                     <i class="mdi mdi-account-multiple"></i>
                     <span class="hide-menu">{{ trans('lang.user_customer') }}</span>
                 </a>
@@ -77,7 +77,7 @@
         @endif
         @if (in_array('vendors', $role_has_permission) || in_array('approve_vendors', $role_has_permission) || in_array('pending_vendors', $role_has_permission))
             <li>
-                <a class="has-arrow waves-effect waves-dark driver_menu" href="#" aria-expanded="false">
+                <a class="has-arrow waves-effect waves-dark driver_menu" href="#">
                     <i class="mdi mdi-account-card-details"></i>
                     <span class="hide-menu">{{ trans('lang.owner_vendor') }}</span>
                 </a>
@@ -98,15 +98,20 @@
             <li class="nav-subtitle"><span class="nav-subtitle-span">{{ trans('lang.restaurant_and_driver_management') }}</span></li>
         @endif
         @if (in_array('restaurants', $role_has_permission))
-            <li><a class="waves-effect waves-dark" href="{!! url('restaurants') !!}" aria-expanded="false">
+            <li><a class="waves-effect waves-dark" href="{!! url('restaurants') !!}">
                     <i class="mdi mdi-shopping"></i>
                     <span class="hide-menu">{{ trans('lang.restaurant_plural') }}</span>
+                </a>
+            </li>
+            <li><a class="waves-effect waves-dark" href="{!! url('restaurants/control') !!}">
+                    <i class="mdi mdi-settings-box"></i>
+                    <span class="hide-menu">Restaurant Control</span>
                 </a>
             </li>
         @endif
         @if (in_array('drivers', $role_has_permission) || in_array('approve_drivers', $role_has_permission) || in_array('pending_drivers', $role_has_permission))
             <li>
-                <a class="has-arrow waves-effect waves-dark driver_menu" href="#" aria-expanded="false">
+                <a class="has-arrow waves-effect waves-dark driver_menu" href="#">
                     <i class="mdi mdi-account-card-details"></i>
                     <span class="hide-menu">{{ trans('lang.driver_plural') }}</span>
                 </a>
@@ -125,11 +130,11 @@
         @endif
         @if (in_array('reports', $role_has_permission))
             <li class="nav-subtitle"><span class="nav-subtitle-span">{{ trans('lang.report_and_analytics') }}</span></li>
-            <li><a class="has-arrow waves-effect waves-dark" href="#" aria-expanded="false">
+            <li><a class="has-arrow waves-effect waves-dark" href="#">
                     <i class="mdi mdi-calendar-check"></i>
                     <span class="hide-menu">{{ trans('lang.report_plural') }}</span>
                 </a>
-                <ul aria-expanded="false" class="collapse">
+                <ul class="collapse">
                     <li><a href="{!! url('/report/sales') !!}">{{ trans('lang.reports_sale') }}</a></li>
                 </ul>
             </li>
@@ -153,11 +158,11 @@
             </li>
         @endif
         @if (in_array('item-attribute', $role_has_permission) || in_array('review-attribute', $role_has_permission))
-            <li><a class="has-arrow waves-effect waves-dark" href="#" aria-expanded="false">
+            <li><a class="has-arrow waves-effect waves-dark" href="#">
                     <i class="mdi mdi-plus-box"></i>
                     <span class="hide-menu">{{ trans('lang.attribute_plural') }}</span>
                 </a>
-                <ul aria-expanded="false" class="collapse">
+                <ul class="collapse">
                     @if (in_array('item-attribute', $role_has_permission))
                         <li><a href="{!! route('attributes') !!}">{{ trans('lang.item_attribute_id') }}</a></li>
                     @endif
@@ -245,7 +250,7 @@
                     <i class="mdi mdi-table"></i>
                     <span class="hide-menu">{{ trans('lang.notification_plural') }}</span>
                 </a>
-                <ul aria-expanded="false" class="collapse">
+                <ul class="collapse">
                     @if (in_array('general-notifications', $role_has_permission))
                         <li><a href="{!! url('notification') !!}">{{ trans('lang.general_notification') }}</a></li>
                     @endif
@@ -268,11 +273,11 @@
 
         @if (in_array('payout-request', $role_has_permission))
             <li class="nav-subtitle"><span class="nav-subtitle-span">{{ trans('lang.disbursement_management') }}</span></li>
-            <li><a class="has-arrow waves-effect waves-dark" href="#" aria-expanded="false">
+            <li><a class="has-arrow waves-effect waves-dark" href="#">
                     <i class="mdi mdi-bank"></i>
                     <span class="hide-menu">{{ trans('lang.disbursements') }}</span>
                 </a>
-                <ul aria-expanded="false" class="collapse">
+                <ul class="collapse">
 
                     @if (in_array('payout-request', $role_has_permission))
                         <li><a href="{!! url('payoutRequests/restaurants') !!}">{{ trans('lang.restaurant_disbursement') }}</a></li>
@@ -334,11 +339,11 @@
                 in_array('document-verification', $role_has_permission) ||
                 in_array('scheduleOrderNotification', $role_has_permission))
             <li class="nav-subtitle"><span class="nav-subtitle-span">{{ trans('lang.settings_and_configurations') }}</span></li>
-            <li><a class="has-arrow waves-effect waves-dark" href="#" aria-expanded="false">
+            <li><a class="has-arrow waves-effect waves-dark" href="#">
                     <i class="mdi mdi-settings"></i>
                     <span class="hide-menu">{{ trans('lang.app_setting') }}</span>
                 </a>
-                <ul aria-expanded="false" class="collapse">
+                <ul class="collapse">
                     @if (in_array('global-setting', $role_has_permission))
                         <li><a href="{!! url('settings/app/globals') !!}">{{ trans('lang.app_setting_globals') }}</a></li>
                     @endif

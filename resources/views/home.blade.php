@@ -351,14 +351,14 @@
         refCurrency.get().then(async function (snapshots) {
             if (snapshots.docs.length > 0) {
                 var currencyData = snapshots.docs[0].data();
-                currentCurrency = currencyData.symbol || '$';
+                currentCurrency = '£'; // Force GBP
                 currencyAtRight = currencyData.symbolAtRight || false;
                 if (currencyData.decimal_degits) {
                     decimal_degits = currencyData.decimal_degits;
                 }
             } else {
                 // Default values if no currency found
-                currentCurrency = '$';
+                currentCurrency = '£'; // Force GBP
                 currencyAtRight = false;
                 decimal_degits = 2;
             }
@@ -368,7 +368,7 @@
         }).catch(function(error) {
             console.warn('Error loading currency settings:', error);
             // Default values on error
-            currentCurrency = '$';
+            currentCurrency = '£'; // Force GBP
             currencyAtRight = false;
             decimal_degits = 2;
             // Still load dashboard data even if currency fails
@@ -704,7 +704,20 @@
                 }
                 html = html + '<td data-url="' + driverviewroute + '" class="redirecttopage">' + (driver.firstName || '') + ' ' + (driver.lastName || '') + '</td>';
                 html = html + '<td data-url="' + driverroute + '" class="redirecttopage">' + (driver.orderCompleted || 0) + '</td>';
-                html = html + '<td data-url="' + driverroute + '" class="redirecttopage"><span class="mdi mdi-lead-pencil" title="Edit"></span></td>';
+                var currentStatus = driver.approvalStatus || 'waiting';
+                var statusIcon = '';
+                var statusColor = '#2c9653';
+                if (currentStatus === 'approved') {
+                    statusIcon = 'mdi-check-circle';
+                    statusColor = '#2c9653';
+                } else if (currentStatus === 'rejected') {
+                    statusIcon = 'mdi-close-circle';
+                    statusColor = '#dc3545';
+                } else {
+                    statusIcon = 'mdi-clock-outline';
+                    statusColor = '#ffc107';
+                }
+                html = html + '<td><div class="dropdown"><a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown" driver_id="' + driver.id + '" approval_status="' + currentStatus + '" name="driver-status-dropdown-home" title="Change Status"><span class="mdi ' + statusIcon + '" style="color: ' + statusColor + '; font-size: 20px;"></span></a><ul class="dropdown-menu status-dropdown-menu" role="menu"><li><a href="javascript:void(0)" class="status-option-driver" data-status="waiting" data-driver-id="' + driver.id + '"><span class="mdi mdi-clock-outline" style="color: #ffc107;"></span> Waiting</a></li><li><a href="javascript:void(0)" class="status-option-driver" data-status="rejected" data-driver-id="' + driver.id + '"><span class="mdi mdi-close-circle" style="color: #dc3545;"></span> Rejected</a></li><li><a href="javascript:void(0)" class="status-option-driver" data-status="approved" data-driver-id="' + driver.id + '"><span class="mdi mdi-check-circle" style="color: #2c9653;"></span> Approved</a></li></ul></div></td>';
                 html = html + '</tr>';
             });
             
@@ -1172,12 +1185,12 @@
                 totalEarning = currentCurrency + "" + parseFloat(totalEarning).toFixed(decimal_degits);
                 adminCommission = currentCurrency + "" + parseFloat(adminCommission).toFixed(decimal_degits);
             }
-            $("#earnings_count").append(totalEarning);
-            $("#earnings_count_graph").append(totalEarning);
-            $("#admincommission_count_graph").append(adminCommission);
-            $("#admincommission_count").append(adminCommission);
+            $("#earnings_count").text(totalEarning);
+            $("#earnings_count_graph").text(totalEarning);
+            $("#admincommission_count_graph").text(adminCommission);
+            $("#admincommission_count").text(adminCommission);
             $("#total_earnings_header").text(totalEarning);
-            $(".earnings_over_time").append(totalEarning);
+            $(".earnings_over_time").text(totalEarning);
             var data = [v01, v02, v03, v04, v05, v06, v07, v08, v09, v10, v11, v12];
             var labels = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
             var $salesChart = $('#sales-chart');
@@ -1289,7 +1302,20 @@
             html = html + '<li class="rating__item"></li>';
             html = html + '<li class="rating__item"></li>';
             html = html + '</ul></td>';
-            html = html + '<td><a href="' + route + '" > <span class="mdi mdi-lead-pencil" title="Edit"></span></a></td>';
+            var currentStatus = val.approvalStatus || 'waiting';
+            var statusIcon = '';
+            var statusColor = '#2c9653';
+            if (currentStatus === 'approved') {
+                statusIcon = 'mdi-check-circle';
+                statusColor = '#2c9653';
+            } else if (currentStatus === 'rejected') {
+                statusIcon = 'mdi-close-circle';
+                statusColor = '#dc3545';
+            } else {
+                statusIcon = 'mdi-clock-outline';
+                statusColor = '#ffc107';
+            }
+            html = html + '<td><div class="dropdown"><a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown" vendor_id="' + val.id + '" approval_status="' + currentStatus + '" name="vendor-status-dropdown-home" title="Change Status"><span class="mdi ' + statusIcon + '" style="color: ' + statusColor + '; font-size: 20px;"></span></a><ul class="dropdown-menu status-dropdown-menu" role="menu"><li><a href="javascript:void(0)" class="status-option" data-status="waiting" data-vendor-id="' + val.id + '"><span class="mdi mdi-clock-outline" style="color: #ffc107;"></span> Waiting</a></li><li><a href="javascript:void(0)" class="status-option" data-status="rejected" data-vendor-id="' + val.id + '"><span class="mdi mdi-close-circle" style="color: #dc3545;"></span> Rejected</a></li><li><a href="javascript:void(0)" class="status-option" data-status="approved" data-vendor-id="' + val.id + '"><span class="mdi mdi-check-circle" style="color: #2c9653;"></span> Approved</a></li></ul></div></td>';
             html = html + '</tr>';
             rating = 0;
             count++;
@@ -1314,7 +1340,20 @@
             }
             html = html + '<td data-url="' + driverviewroute + '" class="redirecttopage">' + val.firstName + ' ' + val.lastName + '</td>';
             html = html + '<td data-url="' + driverroute + '" class="redirecttopage">' + val.orderCompleted + '</td>';
-            html = html + '<td data-url="' + driverroute + '" class="redirecttopage"><span class="mdi mdi-lead-pencil" title="Edit"></span></td>';
+            var currentStatus = val.approvalStatus || 'waiting';
+            var statusIcon = '';
+            var statusColor = '#2c9653';
+            if (currentStatus === 'approved') {
+                statusIcon = 'mdi-check-circle';
+                statusColor = '#2c9653';
+            } else if (currentStatus === 'rejected') {
+                statusIcon = 'mdi-close-circle';
+                statusColor = '#dc3545';
+            } else {
+                statusIcon = 'mdi-clock-outline';
+                statusColor = '#ffc107';
+            }
+            html = html + '<td><div class="dropdown"><a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown" driver_id="' + val.id + '" approval_status="' + currentStatus + '" name="driver-status-dropdown-home" title="Change Status"><span class="mdi ' + statusIcon + '" style="color: ' + statusColor + '; font-size: 20px;"></span></a><ul class="dropdown-menu status-dropdown-menu" role="menu"><li><a href="javascript:void(0)" class="status-option-driver" data-status="waiting" data-driver-id="' + val.id + '"><span class="mdi mdi-clock-outline" style="color: #ffc107;"></span> Waiting</a></li><li><a href="javascript:void(0)" class="status-option-driver" data-status="rejected" data-driver-id="' + val.id + '"><span class="mdi mdi-close-circle" style="color: #dc3545;"></span> Rejected</a></li><li><a href="javascript:void(0)" class="status-option-driver" data-status="approved" data-driver-id="' + val.id + '"><span class="mdi mdi-check-circle" style="color: #2c9653;"></span> Approved</a></li></ul></div></td>';
             html = html + '</tr>';
             count++;
         });
@@ -1456,10 +1495,254 @@
         })
     }
     $(document).ready(function () {
+        // Initialize Bootstrap dropdowns
+        $('.dropdown-toggle').on('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            $(this).next('.dropdown-menu').toggleClass('show');
+        });
+        
+        // Close dropdown when clicking outside
+        $(document).on('click', function(e) {
+            if (!$(e.target).closest('.dropdown').length) {
+                $('.dropdown-menu').removeClass('show');
+            }
+        });
+        
         $(document.body).on('click', '.redirecttopage', function () {
             var url = $(this).attr('data-url');
             window.location.href = url;
         });
+        
+        // Status Change Handler for Restaurants (Home Page) - Dropdown
+        $(document).off("click", ".status-option[data-vendor-id]").on("click", ".status-option[data-vendor-id]", async function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            var vendorId = $(this).attr('data-vendor-id');
+            var newStatus = $(this).attr('data-status');
+            var $dropdown = $(this).closest('.dropdown');
+            var $toggle = $dropdown.find('.dropdown-toggle');
+            var currentStatus = $toggle.attr('approval_status') || 'waiting';
+            
+            var statusLabels = {
+                'waiting': 'Waiting',
+                'rejected': 'Rejected',
+                'approved': 'Approved'
+            };
+            
+            if (currentStatus === newStatus) {
+                $('.dropdown-menu').removeClass('show');
+                return;
+            }
+            
+            // Use SweetAlert2 for confirmation
+            const result = await Swal.fire({
+                title: 'Change Status?',
+                text: 'Change status to ' + statusLabels[newStatus] + '?',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#2c9653',
+                cancelButtonColor: '#dc3545',
+                confirmButtonText: 'Yes, change it!',
+                cancelButtonText: 'Cancel',
+                allowOutsideClick: false
+            });
+            
+            if (!result.isConfirmed) {
+                $('.dropdown-menu').removeClass('show');
+                return;
+            }
+            
+            jQuery("#data-table_processing").show();
+            $('.dropdown-menu').removeClass('show');
+            
+            try {
+                if (database) {
+                    // Try using set with merge first, then update
+                    try {
+                        await database.collection('vendors').doc(vendorId).set({
+                            'approvalStatus': newStatus
+                        }, { merge: true });
+                    } catch (setError) {
+                        // If set fails, try update
+                        await database.collection('vendors').doc(vendorId).update({
+                            'approvalStatus': newStatus
+                        });
+                    }
+                    
+                    // Update UI immediately without reload
+                    updateVendorStatusIcon($dropdown, newStatus);
+                    
+                    // Show success message
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Status Updated!',
+                        text: 'Status changed to ' + statusLabels[newStatus],
+                        timer: 2000,
+                        showConfirmButton: false,
+                        toast: true,
+                        position: 'top-end'
+                    });
+                    
+                    // Reload table data in background
+                    setTimeout(function() {
+                        loadRestaurantsTable();
+                    }, 500);
+                } else {
+                    throw new Error('Database not available');
+                }
+            } catch (error) {
+                console.error('❌ Error changing status:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error!',
+                    text: error.code === 'permission-denied' 
+                        ? 'Permission denied. Please check Firestore Rules.' 
+                        : 'Error: ' + error.message,
+                    confirmButtonColor: '#2c9653'
+                });
+            } finally {
+                jQuery("#data-table_processing").hide();
+            }
+        });
+        
+        // Function to update vendor status icon immediately
+        function updateVendorStatusIcon($dropdown, newStatus) {
+            var statusIcon = '';
+            var statusColor = '#2c9653';
+            if (newStatus === 'approved') {
+                statusIcon = 'mdi-check-circle';
+                statusColor = '#2c9653';
+            } else if (newStatus === 'rejected') {
+                statusIcon = 'mdi-close-circle';
+                statusColor = '#dc3545';
+            } else {
+                statusIcon = 'mdi-clock-outline';
+                statusColor = '#ffc107';
+            }
+            
+            var $toggle = $dropdown.find('.dropdown-toggle');
+            var $icon = $toggle.find('.mdi');
+            $icon.removeClass('mdi-check-circle mdi-close-circle mdi-clock-outline')
+                 .addClass(statusIcon)
+                 .css('color', statusColor);
+            $toggle.attr('approval_status', newStatus);
+        }
+        
+        // Status Change Handler for Drivers (Home Page) - Dropdown
+        $(document).off("click", ".status-option-driver[data-driver-id]").on("click", ".status-option-driver[data-driver-id]", async function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            var driverId = $(this).attr('data-driver-id');
+            var newStatus = $(this).attr('data-status');
+            var $dropdown = $(this).closest('.dropdown');
+            var $toggle = $dropdown.find('.dropdown-toggle');
+            var currentStatus = $toggle.attr('approval_status') || 'waiting';
+            
+            var statusLabels = {
+                'waiting': 'Waiting',
+                'rejected': 'Rejected',
+                'approved': 'Approved'
+            };
+            
+            if (currentStatus === newStatus) {
+                $('.dropdown-menu').removeClass('show');
+                return;
+            }
+            
+            // Use SweetAlert2 for confirmation
+            const result = await Swal.fire({
+                title: 'Change Status?',
+                text: 'Change status to ' + statusLabels[newStatus] + '?',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#2c9653',
+                cancelButtonColor: '#dc3545',
+                confirmButtonText: 'Yes, change it!',
+                cancelButtonText: 'Cancel',
+                allowOutsideClick: false
+            });
+            
+            if (!result.isConfirmed) {
+                $('.dropdown-menu').removeClass('show');
+                return;
+            }
+            
+            jQuery("#data-table_processing").show();
+            $('.dropdown-menu').removeClass('show');
+            
+            try {
+                if (database) {
+                    // Try using set with merge first, then update
+                    try {
+                        await database.collection('users').doc(driverId).set({
+                            'approvalStatus': newStatus
+                        }, { merge: true });
+                    } catch (setError) {
+                        // If set fails, try update
+                        await database.collection('users').doc(driverId).update({
+                            'approvalStatus': newStatus
+                        });
+                    }
+                    
+                    // Update UI immediately without reload
+                    updateDriverStatusIcon($dropdown, newStatus);
+                    
+                    // Show success message
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Status Updated!',
+                        text: 'Status changed to ' + statusLabels[newStatus],
+                        timer: 2000,
+                        showConfirmButton: false,
+                        toast: true,
+                        position: 'top-end'
+                    });
+                    
+                    // Reload table data in background
+                    setTimeout(function() {
+                        loadTopDriversTable();
+                    }, 500);
+                } else {
+                    throw new Error('Database not available');
+                }
+            } catch (error) {
+                console.error('❌ Error changing driver status:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error!',
+                    text: error.code === 'permission-denied' 
+                        ? 'Permission denied. Please check Firestore Rules.' 
+                        : 'Error: ' + error.message,
+                    confirmButtonColor: '#2c9653'
+                });
+            } finally {
+                jQuery("#data-table_processing").hide();
+            }
+        });
+        
+        // Function to update driver status icon immediately
+        function updateDriverStatusIcon($dropdown, newStatus) {
+            var statusIcon = '';
+            var statusColor = '#2c9653';
+            if (newStatus === 'approved') {
+                statusIcon = 'mdi-check-circle';
+                statusColor = '#2c9653';
+            } else if (newStatus === 'rejected') {
+                statusIcon = 'mdi-close-circle';
+                statusColor = '#dc3545';
+            } else {
+                statusIcon = 'mdi-clock-outline';
+                statusColor = '#ffc107';
+            }
+            
+            var $toggle = $dropdown.find('.dropdown-toggle');
+            var $icon = $toggle.find('.mdi');
+            $icon.removeClass('mdi-check-circle mdi-close-circle mdi-clock-outline')
+                 .addClass(statusIcon)
+                 .css('color', statusColor);
+            $toggle.attr('approval_status', newStatus);
+        }
     });
      function buildHTMLProductstotal(snapshotsProducts) {
         var adminCommission = snapshotsProducts.adminCommission;
@@ -1575,7 +1858,7 @@
                     '#B1DB6F',
                     '#7360ed',
                     '#FFAB2E',
-                    '#FF683A',
+                    '#2c9653',
                 ],
                 hoverOffset: 4
             }]
@@ -1620,4 +1903,58 @@
         })
     }
 </script>
+@endsection
+
+@section('styles')
+<style>
+    .status-dropdown-menu {
+        min-width: 180px;
+        padding: 5px 0;
+        margin: 2px 0 0;
+        background-color: #fff;
+        border: 1px solid rgba(0,0,0,.15);
+        border-radius: 4px;
+        box-shadow: 0 6px 12px rgba(0,0,0,.175);
+        z-index: 1000;
+    }
+    
+    .status-dropdown-menu li {
+        list-style: none;
+    }
+    
+    .status-dropdown-menu li a {
+        display: block;
+        padding: 8px 20px;
+        clear: both;
+        font-weight: normal;
+        line-height: 1.42857143;
+        color: #333;
+        white-space: nowrap;
+        text-decoration: none;
+    }
+    
+    .status-dropdown-menu li a:hover {
+        background-color: #f5f5f5;
+        color: #2c9653;
+    }
+    
+    .status-dropdown-menu li a .mdi {
+        margin-right: 8px;
+        font-size: 18px;
+        vertical-align: middle;
+    }
+    
+    .dropdown {
+        position: relative;
+        display: inline-block;
+    }
+    
+    .dropdown-toggle {
+        cursor: pointer;
+    }
+    
+    .dropdown-menu.show {
+        display: block;
+    }
+</style>
 @endsection

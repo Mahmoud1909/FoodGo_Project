@@ -13,7 +13,7 @@ class RestaurantController extends Controller
         $this->middleware('auth');
     }
     
-	  public function index()
+    public function index()
     {
         Log::info('🍽️ Restaurants index page accessed', [
             'user_id' => auth()->id(),
@@ -23,113 +23,78 @@ class RestaurantController extends Controller
         return view("restaurants.index");
     }
 
-    public function log(Request $request)
+    public function control()
     {
-        $level = $request->input('level', 'info');
-        $message = $request->input('message', '');
-        $data = $request->input('data', []);
+        Log::info('🎛️ Restaurant Control page accessed', [
+            'user_id' => auth()->id(),
+            'timestamp' => now()->toDateTimeString()
+        ]);
 
-        $logMessage = '🌐 [JS] ' . $message;
-        if (!empty($data)) {
-            $logMessage .= ' | Data: ' . json_encode($data);
-        }
-
-        switch ($level) {
-            case 'error':
-                Log::error($logMessage);
-                break;
-            case 'warning':
-                Log::warning($logMessage);
-                break;
-            case 'debug':
-                Log::debug($logMessage);
-                break;
-            default:
-                Log::info($logMessage);
-        }
-
-        return response()->json(['success' => true]);
-    }
-
-    public function vendors()
-    {
-        return view("vendors.index");
-    }
-
-
-    public function edit($id)
-    {
-    	    return view('restaurants.edit')->with('id',$id);
-    }
-
-    public function vendorEdit($id)
-    {
-    	    return view('vendors.edit')->with('id',$id);
-    }
-
-    public function vendorSubscriptionPlanHistory($id='')
-    {
-    	    return view('subscription_plans.history')->with('id',$id);
+        return view("restaurants.control");
     }
 
     public function view($id)
     {
-        return view('restaurants.view')->with('id',$id);
+        Log::info('👁️ Restaurant View page accessed', [
+            'user_id' => auth()->id(),
+            'restaurant_id' => $id,
+            'timestamp' => now()->toDateTimeString()
+        ]);
+
+        return view("restaurants.view")->with('id', $id);
     }
 
-    public function plan($id)
+    public function edit($id)
     {
+        Log::info('✏️ Restaurant Edit page accessed', [
+            'user_id' => auth()->id(),
+            'restaurant_id' => $id,
+            'timestamp' => now()->toDateTimeString()
+        ]);
 
-        return view("restaurants.plan")->with('id',$id);
+        return view("restaurants.edit")->with('id', $id);
     }
 
-    public function payout($id)
+    public function create()
     {
-        return view('restaurants.payout')->with('id',$id);
-    }
+        Log::info('➕ Restaurant Create page accessed', [
+            'user_id' => auth()->id(),
+            'timestamp' => now()->toDateTimeString()
+        ]);
 
-    public function foods($id)
-    {
-        return view('restaurants.foods')->with('id',$id);
-    }
-
-    public function orders($id)
-    {
-        return view('restaurants.orders')->with('id',$id);
-    }
-
-    public function reviews($id)
-    {
-        return view('restaurants.reviews')->with('id',$id);
+        return view("restaurants.create");
     }
 
     public function promos($id)
     {
-        return view('restaurants.promos')->with('id',$id);
+        Log::info('🎁 Restaurant Promos page accessed', [
+            'user_id' => auth()->id(),
+            'restaurant_id' => $id,
+            'timestamp' => now()->toDateTimeString()
+        ]);
+
+        return view("restaurants.promos")->with('id', $id);
     }
 
-    public function vendorCreate(){
-        return view('vendors.create');
-    }
-
-    public function create(){
-        return view('restaurants.create');
-    }
-
-    public function DocumentList($id){
-        return view("vendors.document_list")->with('id',$id);
-    }
-
-    public function DocumentUpload($vendorId, $id)
+    public function log(Request $request)
     {
-        return view("vendors.document_upload", compact('vendorId', 'id'));
+        Log::info('📝 Restaurant log action', [
+            'user_id' => auth()->id(),
+            'data' => $request->all(),
+            'timestamp' => now()->toDateTimeString()
+        ]);
+
+        return response()->json(['success' => true]);
     }
-    public function currentSubscriberList($id)
+
+    public function editNew($id)
     {
-        return view("subscription_plans.current_subscriber", compact( 'id'));
-    }
-    public function vendorChat($id)
-    {
-        return view("vendors.chat", compact( 'id'));
+        Log::info('🆕 Restaurant Edit New page accessed', [
+            'user_id' => auth()->id(),
+            'restaurant_id' => $id,
+            'timestamp' => now()->toDateTimeString()
+        ]);
+
+        return view("restaurants.edit_tab")->with('id', $id);
     }
 }

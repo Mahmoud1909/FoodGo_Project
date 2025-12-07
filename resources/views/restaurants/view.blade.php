@@ -59,6 +59,9 @@
                         <li>
                             <a href="{{ route('restaurants.deliveryman', $id) }}">{{ trans('lang.deliveryman') }}</a>
                         </li>
+                        <li>
+                            <a href="{{ route('restaurants.edit.new', $id) }}" style="color: #2c9653; border-bottom-color: #2c9653;">Edit Restaurant</a>
+                        </li>
                     </ul>
                 </div>
                 <div class="row">
@@ -652,7 +655,7 @@
             refCurrency.get().then(async function(snapshots) {
                 if (snapshots.docs.length > 0) {
                     var currencyData = snapshots.docs[0].data();
-                    currentCurrency = currencyData.symbol;
+                    currentCurrency = '£'; // Force GBP
                     currencyAtRight = currencyData.symbolAtRight;
                     if (currencyData.decimal_degits) {
                         decimal_degits = currencyData.decimal_degits;
@@ -844,8 +847,9 @@
                     }
                     walletRoute = "{{ route('users.walletstransaction', ':id') }}";
                     walletRoute = walletRoute.replace(":id", restaurant.author);
-                    $('#restaurant_wallet').append('<a href="' + walletRoute + '">{{ trans('lang.wallet_transaction') }}</a>');
-                    $('#subscription_plan').append('<a href="' + "{{ route('vendor.subscriptionPlanHistory', ':id') }}".replace(':id', restaurant.author) + '">' + '{{ trans('lang.subscription_history') }}' + '</a>');
+                    // Use .html() instead of .append() to prevent duplication
+                    $('#restaurant_wallet').html('<a href="' + walletRoute + '">{{ trans('lang.wallet_transaction') }}</a>');
+                    $('#subscription_plan').html('<a href="' + "{{ route('vendor.subscriptionPlanHistory', ':id') }}".replace(':id', restaurant.author) + '">' + '{{ trans('lang.subscription_history') }}' + '</a>');
                     const walletBalance = getWalletBalance(restaurant.author);
                     const getStoreName = getStoreNameFunction('<?php echo $id; ?>');
                     var review = '<ul class="rating" data-rating="' + rating + '">';
@@ -1568,5 +1572,24 @@
             }
         })
     </script>
+@endsection
+@section('styles')
+<style>
+    /* Custom Color for Edit Restaurant Tab: #2c9653 */
+    .menu-tab ul li a[href*="restaurants.control.edit.this"] {
+        color: #2c9653 !important;
+    }
+    
+    .menu-tab ul li a[href*="restaurants.control.edit.this"]:hover {
+        color: #247a45 !important;
+        border-bottom-color: #2c9653 !important;
+    }
+    
+    .menu-tab ul li.active a[href*="restaurants.control.edit.this"],
+    .menu-tab ul li a[href*="restaurants.control.edit.this"]:focus {
+        color: #2c9653 !important;
+        border-bottom-color: #2c9653 !important;
+    }
+</style>
 @endsection
 

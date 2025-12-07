@@ -1,0 +1,65 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Allow read and write access to vendors collection for authenticated users
+    match /vendors/{document=**} {
+      allow read: if true;
+      allow write: if request.auth != null;
+    }
+    
+    // Allow read and write access to users collection for authenticated users
+    match /users/{document=**} {
+      allow read: if true;
+      allow write: if request.auth != null;
+    }
+    
+    // Allow read access to settings collection
+    match /settings/{document=**} {
+      allow read: if true;
+    }
+    
+    // Allow read access to currencies collection
+    match /currencies/{document=**} {
+      allow read: if true;
+    }
+    
+    // Allow read access to zone collection
+    match /zone/{document=**} {
+      allow read: if true;
+    }
+    
+    // Allow read access to vendor_categories collection
+    match /vendor_categories/{document=**} {
+      allow read: if true;
+    }
+    
+    // Allow read access to subscription_plans collection
+    match /subscription_plans/{document=**} {
+      allow read: if true;
+    }
+    
+    // Allow read access to orders collection
+    match /orders/{document=**} {
+      allow read: if true;
+      allow write: if request.auth != null;
+    }
+    
+    // Allow read access to wallet collection
+    match /wallet/{document=**} {
+      allow read: if true;
+      allow write: if request.auth != null;
+    }
+    
+    // Allow read access to driver_payouts collection
+    match /driver_payouts/{document=**} {
+      allow read: if true;
+      allow write: if request.auth != null;
+    }
+    
+    // Default rule: Allow read for all authenticated users, write for authenticated users
+    match /{document=**} {
+      allow read: if true;
+      allow write: if request.auth != null;
+    }
+  }
+}
