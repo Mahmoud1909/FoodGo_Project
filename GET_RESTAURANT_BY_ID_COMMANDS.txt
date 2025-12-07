@@ -1,122 +1,0 @@
-# 🔍 كود Terminal لاستدعاء بيانات المطعم
-
-## 📋 Restaurant ID:
-```
-5KjbF2LDaEe19ttEFClo
-```
-
-## 🚀 الطريقة 1: استخدام Node.js Script
-
-### 1. تشغيل السكريبت:
-```bash
-node get-restaurant-by-id.js
-```
-
-### 2. النتيجة:
-- ✅ سيطبع جميع بيانات المطعم في Terminal
-- ✅ سيطبع JSON كامل
-- ✅ سيطبع كل حقل على حدة
-
----
-
-## 🚀 الطريقة 2: استخدام Firebase CLI
-
-### 1. الحصول على البيانات:
-```bash
-firebase firestore:get vendors/5KjbF2LDaEe19ttEFClo
-```
-
-### 2. أو استخدام gcloud:
-```bash
-gcloud firestore documents get vendors/5KjbF2LDaEe19ttEFClo --project=YOUR_PROJECT_ID
-```
-
----
-
-## 🚀 الطريقة 3: استخدام curl (REST API)
-
-### 1. الحصول على Access Token:
-```bash
-gcloud auth print-access-token
-```
-
-### 2. استدعاء البيانات:
-```bash
-curl -X GET \
-  "https://firestore.googleapis.com/v1/projects/YOUR_PROJECT_ID/databases/(default)/documents/vendors/5KjbF2LDaEe19ttEFClo" \
-  -H "Authorization: Bearer $(gcloud auth print-access-token)"
-```
-
----
-
-## 📝 ملاحظات:
-
-- ✅ استبدل `YOUR_PROJECT_ID` بـ Project ID الخاص بك
-- ✅ تأكد من أن `credentials.json` موجود
-- ✅ تأكد من أن Service Account لديه الصلاحيات المطلوبة
-
----
-
-**الطريقة الموصى بها:** استخدام `node get-restaurant-by-id.js`
-
-
-
-## 📋 Restaurant ID:
-```
-5KjbF2LDaEe19ttEFClo
-```
-
-## 🚀 الطريقة 1: استخدام Node.js Script
-
-### 1. تشغيل السكريبت:
-```bash
-node get-restaurant-by-id.js
-```
-
-### 2. النتيجة:
-- ✅ سيطبع جميع بيانات المطعم في Terminal
-- ✅ سيطبع JSON كامل
-- ✅ سيطبع كل حقل على حدة
-
----
-
-## 🚀 الطريقة 2: استخدام Firebase CLI
-
-### 1. الحصول على البيانات:
-```bash
-firebase firestore:get vendors/5KjbF2LDaEe19ttEFClo
-```
-
-### 2. أو استخدام gcloud:
-```bash
-gcloud firestore documents get vendors/5KjbF2LDaEe19ttEFClo --project=YOUR_PROJECT_ID
-```
-
----
-
-## 🚀 الطريقة 3: استخدام curl (REST API)
-
-### 1. الحصول على Access Token:
-```bash
-gcloud auth print-access-token
-```
-
-### 2. استدعاء البيانات:
-```bash
-curl -X GET \
-  "https://firestore.googleapis.com/v1/projects/YOUR_PROJECT_ID/databases/(default)/documents/vendors/5KjbF2LDaEe19ttEFClo" \
-  -H "Authorization: Bearer $(gcloud auth print-access-token)"
-```
-
----
-
-## 📝 ملاحظات:
-
-- ✅ استبدل `YOUR_PROJECT_ID` بـ Project ID الخاص بك
-- ✅ تأكد من أن `credentials.json` موجود
-- ✅ تأكد من أن Service Account لديه الصلاحيات المطلوبة
-
----
-
-**الطريقة الموصى بها:** استخدام `node get-restaurant-by-id.js`
-
