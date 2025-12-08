@@ -19,7 +19,7 @@
             <div class="col-md-7 align-self-center">
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a href="{{ url('/dashboard') }}">{{ trans('lang.dashboard') }}</a></li>
-                    <li class="breadcrumb-item"><a href="{!! route('restaurants') !!}">{{ trans('lang.vendor_plural2') }}</a></li>
+                    <li class="breadcrumb-item"><a href="{!! route('restaurants.control') !!}">Restaurant Control</a></li>
                     <li class="breadcrumb-item active">{{ trans('lang.vendor_edit') }}</li>
                 </ol>
             </div>
@@ -188,7 +188,7 @@
                 <div class="form-group col-12 text-center btm-btn">
                     <button type="button" class="btn btn-primary edit-form-btn"><i class="fa fa-save"></i>
                         {{ trans('lang.save') }}</button>
-                    <a href="{!! route('restaurants') !!}" class="btn btn-default"><i
+                    <a href="{!! route('restaurants.control') !!}" class="btn btn-default"><i
                             class="fa fa-undo"></i>{{ trans('lang.cancel') }}</a>
                 </div>
             </div>

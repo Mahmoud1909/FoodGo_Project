@@ -118,6 +118,12 @@
                 var placeholderImageData = snapshotsimage.data();
                 placeholderImage = placeholderImageData.image;
             });
+            
+            // Destroy existing DataTable if it exists
+            if ($.fn.DataTable.isDataTable('#categoriesTable')) {
+                $('#categoriesTable').DataTable().destroy();
+            }
+            
             const table = $('#categoriesTable').DataTable({
             pageLength: 10, // Number of rows per page
             processing: false, // Show processing indicator

@@ -97,4 +97,135 @@ class RestaurantController extends Controller
 
         return view("restaurants.edit_tab")->with('id', $id);
     }
+
+    public function vendors()
+    {
+        Log::info('👥 Vendors list page accessed', [
+            'user_id' => auth()->id(),
+            'timestamp' => now()->toDateTimeString()
+        ]);
+
+        return view("vendors.index");
+    }
+
+    public function vendorCreate()
+    {
+        Log::info('➕ Vendor Create page accessed', [
+            'user_id' => auth()->id(),
+            'timestamp' => now()->toDateTimeString()
+        ]);
+
+        return view("vendors.create");
+    }
+
+    public function vendorEdit($id)
+    {
+        Log::info('✏️ Vendor Edit page accessed', [
+            'user_id' => auth()->id(),
+            'vendor_id' => $id,
+            'timestamp' => now()->toDateTimeString()
+        ]);
+
+        return view("vendors.edit_new")->with('id', $id);
+    }
+
+    public function vendorChat($id)
+    {
+        Log::info('💬 Vendor Chat page accessed', [
+            'user_id' => auth()->id(),
+            'vendor_id' => $id,
+            'timestamp' => now()->toDateTimeString()
+        ]);
+
+        return view("vendors.chat", compact('id'));
+    }
+
+    public function DocumentList($id)
+    {
+        Log::info('📄 Vendor Document List page accessed', [
+            'user_id' => auth()->id(),
+            'vendor_id' => $id,
+            'timestamp' => now()->toDateTimeString()
+        ]);
+
+        return view("vendors.document_list")->with('id', $id);
+    }
+
+    public function DocumentUpload($driverId, $id)
+    {
+        Log::info('📤 Vendor Document Upload page accessed', [
+            'user_id' => auth()->id(),
+            'driver_id' => $driverId,
+            'document_id' => $id,
+            'timestamp' => now()->toDateTimeString()
+        ]);
+
+        return view("vendors.document_upload", compact('driverId', 'id'));
+    }
+
+    public function vendorSubscriptionPlanHistory($id = null)
+    {
+        Log::info('📊 Vendor Subscription Plan History page accessed', [
+            'user_id' => auth()->id(),
+            'vendor_id' => $id,
+            'timestamp' => now()->toDateTimeString()
+        ]);
+
+        return view("subscription_plans.history")->with('id', $id);
+    }
+
+    public function controlEdit($id)
+    {
+        Log::info('🎛️ Restaurant Control Edit page accessed', [
+            'user_id' => auth()->id(),
+            'restaurant_id' => $id,
+            'timestamp' => now()->toDateTimeString()
+        ]);
+
+        return view("restaurants.control_edit")->with('id', $id);
+    }
+
+    public function controlEditNew($id)
+    {
+        Log::info('🆕 Restaurant Control Edit New page accessed', [
+            'user_id' => auth()->id(),
+            'restaurant_id' => $id,
+            'timestamp' => now()->toDateTimeString()
+        ]);
+
+        return view("restaurants.control_edit_new")->with('id', $id);
+    }
+
+    public function restaurantEditing($id)
+    {
+        Log::info('✏️ Restaurant Editing page accessed', [
+            'user_id' => auth()->id(),
+            'restaurant_id' => $id,
+            'timestamp' => now()->toDateTimeString()
+        ]);
+
+        return view("restaurants.edit_tab")->with('id', $id);
+    }
+
+    public function editThisRestaurant($id)
+    {
+        Log::info('🔧 Edit This Restaurant page accessed', [
+            'user_id' => auth()->id(),
+            'restaurant_id' => $id,
+            'timestamp' => now()->toDateTimeString()
+        ]);
+
+        return view("restaurants.edit_this_restaurant")->with('id', $id);
+    }
+
+    public function currentSubscriberList($id)
+    {
+        Log::info('📋 Current Subscriber List page accessed', [
+            'user_id' => auth()->id(),
+            'subscription_plan_id' => $id,
+            'timestamp' => now()->toDateTimeString()
+        ]);
+
+        return view("subscription_plans.current_subscriber")->with('id', $id);
+    }
 }

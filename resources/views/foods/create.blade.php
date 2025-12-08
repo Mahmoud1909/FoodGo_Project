@@ -372,6 +372,166 @@
     @endif
 
     <script>
+        // Define selectAttribute globally before waitForFirestore so it's available for onchange
+        window.selectAttribute = function(item_attribute = '') {
+            if (item_attribute) {
+                try {
+                    var item_attribute = $.parseJSON(atob(item_attribute));
+                } catch(e) {
+                    console.warn('Error parsing item_attribute:', e);
+                    item_attribute = null;
+                }
+            }
+            var html = '';
+            $("#item_attribute").find('option:selected').each(function() {
+                var $this = $(this);
+                var selected_options = [];
+                if (item_attribute && item_attribute.attributes) {
+                    $.each(item_attribute.attributes, function(index, attribute) {
+                        if ($this.val() == attribute.attribute_id) {
+                            selected_options.push(attribute.attribute_options);
+                        }
+                    });
+                }
+                html += '<div class="row" id="attr_' + $this.val() + '">';
+                html += '<div class="col-md-3">';
+                html += '<label>' + $this.text() + '</label>';
+                html += '</div>';
+                html += '<div class="col-lg-9">';
+                html += '<input type="text" class="form-control" id="attribute_options_' + $this.val() + '" value="' + selected_options + '" placeholder="Add attribute values" data-role="tagsinput" onchange="variants_update(\'' + btoa(JSON.stringify(item_attribute || {})) + '\')">';
+                html += '</div>';
+                html += '</div>';
+            });
+            $("#item_attributes").html(html);
+            if ($("#item_attributes input[data-role=tagsinput]").length > 0) {
+                $("#item_attributes input[data-role=tagsinput]").tagsinput();
+            }
+            if ($("#item_attribute").val() && $("#item_attribute").val().length == 0) {
+                $("#attributes").val('');
+                $("#variants").val('');
+                $("#item_variants").html('');
+            }
+            // Call variants_update if it exists
+            if (typeof variants_update === 'function') {
+                variants_update();
+            }
+        };
+        
+        // Define getCombinations globally (used by variants_update)
+        window.getCombinations = function(arr) {
+            if (arr.length) {
+                if (arr.length == 1) {
+                    return arr[0];
+                } else {
+                    var result = [];
+                    var allCasesOfRest = window.getCombinations(arr.slice(1));
+                    for (var i = 0; i < allCasesOfRest.length; i++) {
+                        for (var j = 0; j < arr[0].length; j++) {
+                            result.push(arr[0][j] + '-' + allCasesOfRest[i]);
+                        }
+                    }
+                    return result;
+                }
+            } else {
+                return [];
+            }
+        };
+        
+        // Define variants_update globally before waitForFirestore so it's available for onchange
+        window.variants_update = function(item_attributeX = '') {
+            if (item_attributeX) {
+                try {
+                    var item_attributeX = $.parseJSON(atob(item_attributeX));
+                } catch(e) {
+                    console.warn('Error parsing item_attributeX:', e);
+                    item_attributeX = null;
+                }
+            }
+            var html = '';
+            var item_attribute = $("#item_attribute").map(function(idx, ele) {
+                return $(ele).val();
+            }).get();
+            if (item_attribute.length > 0) {
+                var attributes = [];
+                var attributeSet = [];
+                $.each(item_attribute, function(index, attribute) {
+                    var attribute_options = $("#attribute_options_" + attribute).val();
+                    if (attribute_options) {
+                        var attribute_options = attribute_options.split(',');
+                        attribute_options = $.map(attribute_options, function(value) {
+                            return value.replace(/[^0-9a-zA-Z a]/g, '');
+                        });
+                        attributeSet.push(attribute_options);
+                        attributes.push({
+                            'attribute_id': attribute,
+                            'attribute_options': attribute_options
+                        });
+                    }
+                });
+                $('#attributes').val(JSON.stringify(attributes));
+                var variants = window.getCombinations(attributeSet);
+                $('#variants').val(JSON.stringify(variants));
+
+                if (attributeSet.length > 0) {
+                    html += '<table class="table table-bordered">';
+                    html += '<thead class="thead-light">';
+                    html += '<tr>';
+                    html += '<th class="text-center"><span class="control-label">Variant</span></th>';
+                    html += '<th class="text-center"><span class="control-label">Variant Price</span></th>';
+                    html += '<th class="text-center"><span class="control-label">Variant Quantity</span></th>';
+                    html += '<th class="text-center"><span class="control-label">Variant Image</span></th>';
+                    html += '</tr>';
+                    html += '</thead>';
+                    html += '<tbody>';
+                    $.each(variants, function(index, variant) {
+                        var variant_price = 1;
+                        var variant_qty = -1;
+                        var variant_image = variant_image_url = '';
+                        if (item_attributeX && item_attributeX.variants) {
+                            var variant_info = $.map(item_attributeX.variants, function(v, i) {
+                                if (v.variant_sku == variant) {
+                                    return v;
+                                }
+                            });
+                            if (variant_info[0]) {
+                                variant_price = variant_info[0].variant_price;
+                                variant_qty = variant_info[0].variant_quantity;
+                                if (variant_info[0].variant_image) {
+                                    variant_image = '<img class="rounded" style="width:50px" src="' + variant_info[0].variant_image + '" alt="image"><i class="mdi mdi-delete" data-variant="' + variant + '" data-status="old"></i>';
+                                    variant_image_url = variant_info[0].variant_image;
+                                }
+                            }
+                        }
+                        html += '<tr>';
+                        html += '<td><label for="" class="control-label">' + variant + '</label></td>';
+                        html += '<td>';
+                        html += '<input type="number" id="price_' + variant + '" value="' + variant_price + '" min="0" class="form-control">';
+                        html += '</td>';
+                        html += '<td>';
+                        html += '<input type="number" id="qty_' + variant + '" value="' + variant_qty + '" min="-1" class="form-control">';
+                        html += '</td>';
+                        html += '<td>';
+                        html += '<div class="variant-image">';
+                        html += '<div class="upload">';
+                        html += '<div class="image" id="variant_' + variant + '_image">' + variant_image + '</div>';
+                        html += '<div class="icon"><i class="mdi mdi-cloud-upload" data-variant="' + variant + '" id="upload_' + variant + '"></i></div>';
+                        html += '</div>';
+                        html += '<div id="variant_' + variant + '_process"></div>';
+                        html += '<div class="input-file">';
+                        html += '<input type="file" id="file_' + variant + '" onChange="handleVariantFileSelect(event,\'' + variant + '\')" class="form-control" style="display:none;">';
+                        html += '<input type="hidden" id="variant_' + variant + '_url" value="' + variant_image_url + '">';
+                        html += '</div>';
+                        html += '</div>';
+                        html += '</td>';
+                        html += '</tr>';
+                    });
+                    html += '</tbody>';
+                    html += '</table>';
+                }
+            }
+            $("#item_variants").html(html);
+        };
+        
         // Wait for Firestore to be ready
         window.waitForFirestore(function(database) {
             if (!database) {
@@ -1046,144 +1206,8 @@
             });
         }
 
-        function selectAttribute(item_attribute = '') {
-            if (item_attribute) {
-                var item_attribute = $.parseJSON(atob(item_attribute));
-            }
-            var html = '';
-            $("#item_attribute").find('option:selected').each(function() {
-                var $this = $(this);
-                var selected_options = [];
-                if (item_attribute) {
-                    $.each(item_attribute.attributes, function(index, attribute) {
-                        if ($this.val() == attribute.attribute_id) {
-                            selected_options.push(attribute.attribute_options);
-                        }
-                    });
-                }
-                html += '<div class="row" id="attr_' + $this.val() + '">';
-                html += '<div class="col-md-3">';
-                html += '<label>' + $this.text() + '</label>';
-                html += '</div>';
-                html += '<div class="col-lg-9">';
-                html += '<input type="text" class="form-control" id="attribute_options_' + $this.val() + '" value="' + selected_options + '" placeholder="Add attribute values" data-role="tagsinput" onchange="variants_update(\'' + btoa(JSON.stringify(item_attribute)) + '\')">';
-                html += '</div>';
-                html += '</div>';
-            });
-            $("#item_attributes").html(html);
-            $("#item_attributes input[data-role=tagsinput]").tagsinput();
-            if ($("#item_attribute").val().length == 0) {
-                $("#attributes").val('');
-                $("#variants").val('');
-                $("#item_variants").html('');
-            }
-        }
 
-        function variants_update(item_attributeX = '') {
-            if (item_attributeX) {
-                var item_attributeX = $.parseJSON(atob(item_attributeX));
-            }
-            var html = '';
-            var item_attribute = $("#item_attribute").map(function(idx, ele) {
-                return $(ele).val();
-            }).get();
-            if (item_attribute.length > 0) {
-                var attributes = [];
-                var attributeSet = [];
-                $.each(item_attribute, function(index, attribute) {
-                    var attribute_options = $("#attribute_options_" + attribute).val();
-                    if (attribute_options) {
-                        var attribute_options = attribute_options.split(',');
-                        attribute_options = $.map(attribute_options, function(value) {
-                            return value.replace(/[^0-9a-zA-Z a]/g, '');
-                        });
-                        attributeSet.push(attribute_options);
-                        attributes.push({
-                            'attribute_id': attribute,
-                            'attribute_options': attribute_options
-                        });
-                    }
-                });
-                $('#attributes').val(JSON.stringify(attributes));
-                var variants = getCombinations(attributeSet);
-                $('#variants').val(JSON.stringify(variants));
-
-                if (attributeSet.length > 0) {
-                    html += '<table class="table table-bordered">';
-                    html += '<thead class="thead-light">';
-                    html += '<tr>';
-                    html += '<th class="text-center"><span class="control-label">Variant</span></th>';
-                    html += '<th class="text-center"><span class="control-label">Variant Price</span></th>';
-                    html += '<th class="text-center"><span class="control-label">Variant Quantity</span></th>';
-                    html += '<th class="text-center"><span class="control-label">Variant Image</span></th>';
-                    html += '</tr>';
-                    html += '</thead>';
-                    html += '<tbody>';
-                    $.each(variants, function(index, variant) {
-                        var variant_price = 1;
-                        var variant_qty = -1;
-                        var variant_image = variant_image_url = '';
-                        if (item_attributeX) {
-                            var variant_info = $.map(item_attributeX.variants, function(v, i) {
-                                if (v.variant_sku == variant) {
-                                    return v;
-                                }
-                            });
-                            if (variant_info[0]) {
-                                variant_price = variant_info[0].variant_price;
-                                variant_qty = variant_info[0].variant_quantity;
-                                if (variant_info[0].variant_image) {
-                                    variant_image = '<img class="rounded" style="width:50px" src="' + variant_info[0].variant_image + '" alt="image"><i class="mdi mdi-delete" data-variant="' + variant + '" data-status="old"></i>';
-                                    variant_image_url = variant_info[0].variant_image;
-                                }
-                            }
-                        }
-                        html += '<tr>';
-                        html += '<td><label for="" class="control-label">' + variant + '</label></td>';
-                        html += '<td>';
-                        html += '<input type="number" id="price_' + variant + '" value="' + variant_price + '" min="0" class="form-control">';
-                        html += '</td>';
-                        html += '<td>';
-                        html += '<input type="number" id="qty_' + variant + '" value="' + variant_qty + '" min="-1" class="form-control">';
-                        html += '</td>';
-                        html += '<td>';
-                        html += '<div class="variant-image">';
-                        html += '<div class="upload">';
-                        html += '<div class="image" id="variant_' + variant + '_image">' + variant_image + '</div>';
-                        html += '<div class="icon"><i class="mdi mdi-cloud-upload" data-variant="' + variant + '" id="upload_' + variant + '"></i></div>';
-                        html += '</div>';
-                        html += '<div id="variant_' + variant + '_process"></div>';
-                        html += '<div class="input-file">';
-                        html += '<input type="file" id="file_' + variant + '" onChange="handleVariantFileSelect(event,\'' + variant + '\')" class="form-control" style="display:none;">';
-                        html += '<input type="hidden" id="variant_' + variant + '_url" value="' + variant_image_url + '">';
-                        html += '</div>';
-                        html += '</div>';
-                        html += '</td>';
-                        html += '</tr>';
-                    });
-                    html += '</tbody>';
-                    html += '</table>';
-                }
-            }
-            $("#item_variants").html(html);
-        }
-
-        function getCombinations(arr) {
-            if (arr.length) {
-                if (arr.length == 1) {
-                    return arr[0];
-                } else {
-                    var result = [];
-                    var allCasesOfRest = getCombinations(arr.slice(1));
-                    for (var i = 0; i < allCasesOfRest.length; i++) {
-                        for (var j = 0; j < arr[0].length; j++) {
-                            result.push(arr[0][j] + '-' + allCasesOfRest[i]);
-                        }
-                    }
-                    return result;
-                }
-            }
-        }
+        // variants_update and getCombinations are now defined globally above, before waitForFirestore
 
         function uniqid(prefix = "", random = false) {
             const sec = Date.now() * 1000 + Math.random() * 1000;

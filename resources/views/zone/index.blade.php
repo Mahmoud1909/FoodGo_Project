@@ -160,8 +160,15 @@
         var html = '';
         html = html + '<tr>';
         var id = val.id;
+        
+        // Check if id exists and is valid before building route
+        if (!id || id === 'undefined' || id === undefined || id === null || id === '' || String(id).trim() === '') {
+            console.warn('⚠️ [ZONE] Invalid id in buildHTML:', id, val);
+            return html; // Return empty array if id is invalid
+        }
+        
         var route1 = '{{route("zone.edit",":id")}}';
-        route1 = route1.replace(':id', id);
+        route1 = route1.replace(':id', String(id).trim());
         if (checkDeletePermission) {
             html = html + '<td class="delete-all"><input type="checkbox" id="is_open_' + id + '" class="is_open" dataId="' + id + '"><label class="col-3 control-label"\n' +
                 'for="is_open_' + id + '" ></label></td>';

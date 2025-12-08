@@ -64,14 +64,14 @@
         </div>
     </div>
 @endsection
-@section('scripts')z
+@section('scripts')
 <script>
     var id = "<?php echo $id;?>";
-    var database = firebase.firestore();
-    var allRestaurant = database.collection('users').where('role','==','vendor');
-    var ref = database.collection('users').where("id", "==", id);
-    var docsRef = database.collection('documents').where('enable', '==', true).where('type','==','restaurant');
-    var docref = database.collection('documents_verify').doc(id);
+    var database = null;
+    var allRestaurant = null;
+    var ref = null;
+    var docsRef = null;
+    var docref = null;
     var back_photo = '';
     var front_photo = '';
     var backFileName = '';
@@ -79,6 +79,43 @@
     var backFileOld = '';
     var frontFileOld = '';
     var fcmToken = "";
+    
+    // Wait for Firestore to be ready
+    console.log('🔄 [VENDOR DOCUMENTS] Waiting for Firestore to be ready...');
+    window.waitForFirestore(function(db) {
+        console.log('🔄 [VENDOR DOCUMENTS] waitForFirestore callback called');
+        console.log('🔄 [VENDOR DOCUMENTS] Database received:', !!db);
+        
+        if (!db) {
+            console.error('❌ [VENDOR DOCUMENTS] Firestore NOT AVAILABLE!');
+            console.error('❌ [VENDOR DOCUMENTS] Cannot initialize vendor documents page');
+            return;
+        }
+        
+        console.log('✅ [VENDOR DOCUMENTS] Firestore is available!');
+        database = db;
+        
+        // Initialize Firestore references
+        allRestaurant = database.collection('users').where('role','==','vendor');
+        ref = database.collection('users').where("id", "==", id);
+        docsRef = database.collection('documents').where('enable', '==', true).where('type','==','restaurant');
+        docref = database.collection('documents_verify').doc(id);
+        
+        console.log('✅ [VENDOR DOCUMENTS] Database and references initialized');
+        console.log('✅ [VENDOR DOCUMENTS] Firebase initialized successfully');
+        
+        // Initialize page after Firestore is ready
+        initializeVendorDocumentsPage();
+    });
+    
+    function initializeVendorDocumentsPage() {
+        if (!database) {
+            console.error('❌ [VENDOR DOCUMENTS] Database not available in initializeVendorDocumentsPage');
+            return;
+        }
+        
+        console.log('✅ [VENDOR DOCUMENTS] Initializing vendor documents page...');
+        
     $(document).ready(async function () {
         jQuery("#data-table_processing").show();
         $('#exampleModal').on('show.bs.modal', function (event) {
@@ -172,6 +209,8 @@
             jQuery("#data-table_processing").hide();
         });
     });
+    } // End of initializeVendorDocumentsPage function
+    
     $(document.body).on('click', '.redirecttopage', function () {
         var url = $(this).attr('data-url');
         window.location.href = url;

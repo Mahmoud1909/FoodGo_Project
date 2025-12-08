@@ -22,18 +22,35 @@ class RedirectIfAuthenticated
         $guards = empty($guards) ? [null] : $guards;
 
         foreach ($guards as $guard) {
-            if (Auth::guard($guard)->check()) {
-                // استخدام HOME constant من RouteServiceProvider
-                // مع fallback إلى '/dashboard' في حالة عدم وجوده
-                $homePath = RouteServiceProvider::HOME ?? '/dashboard';
-                
-                // محاولة استخدام route name أولاً (أكثر أماناً)
-                try {
-                    return redirect()->route('dashboard');
-                } catch (\Exception $e) {
-                    // في حالة فشل route، استخدم path مباشرة
-                    return redirect($homePath);
+            try {
+                if (Auth::guard($guard)->check()) {
+                    // استخدام HOME constant من RouteServiceProvider
+                    // مع fallback إلى '/dashboard' في حالة عدم وجوده
+                    $homePath = RouteServiceProvider::HOME ?? '/dashboard';
+                    
+                    // محاولة استخدام route name أولاً (أكثر أماناً)
+                    try {
+                        return redirect()->route('dashboard');
+                    } catch (\Exception $e) {
+                        // في حالة فشل route، استخدم path مباشرة
+                        return redirect($homePath);
+                    }
                 }
+            } catch (\Illuminate\Database\QueryException $e) {
+                // في حالة خطأ في قاعدة البيانات، سجّل الخطأ واترك الطلب يمر
+                \Log::error('Database error in RedirectIfAuthenticated middleware', [
+                    'error' => $e->getMessage(),
+                    'guard' => $guard
+                ]);
+                // لا نوقف الطلب، فقط نتجاهل التحقق من المصادقة
+                continue;
+            } catch (\Exception $e) {
+                // لأي أخطاء أخرى، سجّل واترك الطلب يمر
+                \Log::warning('Error in RedirectIfAuthenticated middleware', [
+                    'error' => $e->getMessage(),
+                    'guard' => $guard
+                ]);
+                continue;
             }
         }
 

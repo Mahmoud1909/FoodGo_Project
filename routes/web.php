@@ -56,6 +56,18 @@ Route::middleware(['permission:users,users.create'])->group(function () {
 Route::middleware(['permission:users,users.view'])->group(function () {
     Route::get('/users/view/{id}', [App\Http\Controllers\UserController::class, 'view'])->name('users.view');
 });
+Route::middleware(['permission:customers,customers'])->group(function () {
+    Route::get('/customers', [App\Http\Controllers\CustomerController::class, 'index'])->name('customers');
+});
+Route::middleware(['permission:customers,customers.edit'])->group(function () {
+    Route::get('/customers/edit/{id}', [App\Http\Controllers\CustomerController::class, 'edit'])->name('customers.edit');
+});
+Route::middleware(['permission:users,users'])->group(function () {
+    Route::get('/all-customers', [App\Http\Controllers\CustomerController::class, 'allCustomers'])->name('all.customers');
+});
+Route::middleware(['permission:users,users.edit'])->group(function () {
+    Route::get('/all-customers/edit/{id}', [App\Http\Controllers\CustomerController::class, 'allCustomersEdit'])->name('all.customers.edit');
+});
 Route::middleware(['permission:vendors,vendors'])->group(function () {
     Route::get('/vendors', [App\Http\Controllers\RestaurantController::class, 'vendors'])->name('vendors');
 });

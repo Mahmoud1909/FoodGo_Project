@@ -23,7 +23,7 @@
                         </div>
                     </div>
                     <div class="col-md-3">
-                        <div class="card card-box-with-icon bg--1" onclick="location.href='{!! route('restaurants') !!}'">
+                        <div class="card card-box-with-icon bg--1" onclick="location.href='{!! route('restaurants.control') !!}'">
                             <div class="card-body d-flex justify-content-between align-items-center">
                                 <div class="card-box-with-content">
                                     <h4 class="text-dark-2 mb-1 h4 vendor_count" id="vendor_count"></h4>
@@ -206,7 +206,7 @@
                     <div class="card-header no-border d-flex justify-content-between">
                         <h3 class="card-title">{{trans('lang.restaurant_plural')}}</h3>
                         <div class="card-tools">
-                            <a href="{{route('restaurants')}}" class="btn btn-tool btn-sm"><i class="fa fa-bars"></i>
+                            <a href="{{route('restaurants.control')}}" class="btn btn-tool btn-sm"><i class="fa fa-bars"></i>
                             </a>
                         </div>
                     </div>

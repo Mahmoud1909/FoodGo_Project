@@ -153,10 +153,18 @@
             }
         });
         paymentMethodRef.get().then(function (snapShots) {
-            var data = snapShots.data();
-            Object.keys(data).forEach((listval) => {
-                $('.payment_method').append($("<option value='" + data[listval].name + "'>" + data[listval].name + "</option>"));
-            });
+            if (snapShots.exists) {
+                var data = snapShots.data();
+                if (data && typeof data === 'object') {
+                    Object.keys(data).forEach((listval) => {
+                        if (data[listval] && data[listval].name) {
+                            $('.payment_method').append($("<option value='" + data[listval].name + "'>" + data[listval].name + "</option>"));
+                        }
+                    });
+                }
+            }
+        }).catch(function(error) {
+            console.warn('Error loading payment methods:', error);
         });
         customerRef.get().then(function (snapShots) {
             if (snapShots.docs.length > 0) {
@@ -205,7 +213,15 @@
                 var driverData = ((orderObj.driver && orderObj.driver != null) ? orderObj.driver : '');
                 var userData = ((orderObj.author && orderObj.author != null) ? orderObj.author : '');
                 var vendorData = ((orderObj.vendor && orderObj.vendor != null) ? orderObj.vendor : '');
-                var date = orderObj.createdAt.toDate();
+                var date = null;
+                if (orderObj.createdAt && orderObj.createdAt.toDate) {
+                    date = orderObj.createdAt.toDate();
+                } else if (orderObj.createdAt) {
+                    // Handle case where createdAt is already a Date
+                    date = orderObj.createdAt instanceof Date ? orderObj.createdAt : new Date(orderObj.createdAt);
+                } else {
+                    date = new Date();
+                }
                 var distanceType = ((orderObj.distanceType && orderObj.distanceType != "" && orderObj.distanceType != null) ? orderObj.distanceType : "");
                 finalOrderObject['Order ID'] = orderId;
                 finalOrderObject['Restaurant Name'] = ((vendorData.title) ? vendorData.title : "");
@@ -338,8 +354,17 @@
             var category = $(".category :selected").val();
             var payment_method = $(".payment_method :selected").val();
             var fileFormat = $(".file_format :selected").val();
-            let start_date = moment($('#reportrange').data('daterangepicker').startDate).toDate();
-            let end_date = moment($('#reportrange').data('daterangepicker').endDate).toDate();
+            var daterangepicker = $('#reportrange').data('daterangepicker');
+            if (!daterangepicker || !daterangepicker.startDate || !daterangepicker.endDate) {
+                $(".error_top").show();
+                $(".error_top").html("");
+                $(".error_top").append("<p>{{trans('lang.select_date_error')}}</p>");
+                window.scrollTo(0, 0);
+                jQuery("#overlay").hide();
+                return;
+            }
+            let start_date = moment(daterangepicker.startDate).toDate();
+            let end_date = moment(daterangepicker.endDate).toDate();
             var headerArray = ['Order ID', 'Restaurant Name', 'Driver Name', 'Driver Email', 'Driver Phone', 'User Name', 'User Email', 'User Phone', 'Date', 'Category', 'Payment Method', 'Total', 'Admin Commission'];
             var headers = [];
             $(".error_top").html("");
@@ -383,11 +408,13 @@
                 if (category != "") {
                     ordersRef = ordersRef.where('vendor.categoryID', '==', category)
                 }
-                if (start_date != "") {
-                    ordersRef = ordersRef.where('createdAt', '>=', start_date)
+                if (start_date) {
+                    var fromDate = firebase.firestore.Timestamp.fromDate(start_date);
+                    ordersRef = ordersRef.where('createdAt', '>=', fromDate);
                 }
-                if (end_date != "") {
-                    ordersRef = ordersRef.where('createdAt', '<=', end_date)
+                if (end_date) {
+                    var toDate = firebase.firestore.Timestamp.fromDate(end_date);
+                    ordersRef = ordersRef.where('createdAt', '<=', toDate);
                 }
                 ordersRef.get().then(async function (orderSnapshots) {
                     if (orderSnapshots.docs.length > 0) {

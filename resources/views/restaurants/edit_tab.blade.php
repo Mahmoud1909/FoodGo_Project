@@ -23,7 +23,7 @@
                                     <h3 class="mb-0 restaurantTitle">{{ trans('lang.restaurant_plural') }}</h3>
                                     <ol class="breadcrumb">
                                         <li class="breadcrumb-item"><a href="{{ url('/dashboard') }}">{{ trans('lang.dashboard') }}</a></li>
-                                        <li class="breadcrumb-item"><a href="{!! route('restaurants') !!}">{{ trans('lang.restaurant_plural') }}</a></li>
+                                        <li class="breadcrumb-item"><a href="{!! route('restaurants.control') !!}">Restaurant Control</a></li>
                                         <li class="breadcrumb-item active">Edit Restaurant</li>
                                     </ol>
                                 </div>

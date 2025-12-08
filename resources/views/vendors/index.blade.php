@@ -108,7 +108,8 @@
 @endsection
 @section('scripts')
     <script type="text/javascript">
-        var database = firebase.firestore();
+        // Initialize variables
+        var database = null;
         var type = "{{ $type }}";
         var user_permissions = '<?php echo @session('user_permissions'); ?>';
         user_permissions = Object.values(JSON.parse(user_permissions));
@@ -127,16 +128,62 @@
         ) {
             checkChatPermission = true;
         }
-        var ref = database.collection('users').where("role", "==", "vendor");
-        if (type == 'pending') {
-            ref = database.collection('users').where("role", "==", "vendor").where("isDocumentVerify", "==", false);
-        } else if (type == 'approved') {
-            ref = database.collection('users').where("role", "==", "vendor").where("isDocumentVerify", "==", true);
-        }
+        
+        var ref = null;
         var placeholderImage = '';
         var append_list = '';
-        var initialRef = ref;
-        $('.status_selector').select2({
+        var initialRef = null;
+        
+        // Prevent multiple initializations
+        var vendorsPageInitialized = false;
+        
+        // Wait for Firestore to be ready
+        console.log('🔄 [VENDORS] Waiting for Firestore to be ready...');
+        window.waitForFirestore(function(db) {
+            console.log('🔄 [VENDORS] waitForFirestore callback called');
+            console.log('🔄 [VENDORS] Database received:', !!db);
+            
+            if (!db) {
+                console.error('❌ [VENDORS] Firestore NOT AVAILABLE!');
+                console.error('❌ [VENDORS] Cannot initialize vendors page');
+                return;
+            }
+            
+            // Prevent multiple initializations
+            if (vendorsPageInitialized) {
+                console.log('ℹ️ [VENDORS] Page already initialized, skipping...');
+                return;
+            }
+            
+            console.log('✅ [VENDORS] Firestore is available!');
+            database = db;
+            
+            // Initialize ref after database is ready
+            ref = database.collection('users').where("role", "==", "vendor");
+            if (type == 'pending') {
+                ref = database.collection('users').where("role", "==", "vendor").where("isDocumentVerify", "==", false);
+            } else if (type == 'approved') {
+                ref = database.collection('users').where("role", "==", "vendor").where("isDocumentVerify", "==", true);
+            }
+            initialRef = ref;
+            
+            console.log('✅ [VENDORS] Database and ref initialized');
+            console.log('✅ [VENDORS] Firebase initialized successfully');
+            
+            // Initialize page after Firestore is ready
+            vendorsPageInitialized = true;
+            initializeVendorsPage();
+        });
+        
+        function initializeVendorsPage() {
+            if (!database) {
+                console.error('❌ [VENDORS] Database not available in initializeVendorsPage');
+                return;
+            }
+            
+            console.log('✅ [VENDORS] Initializing vendors page...');
+            
+            $('.status_selector').select2({
             placeholder: '{{ trans('lang.status') }}',
             minimumResultsForSearch: Infinity,
             allowClear: true
@@ -186,7 +233,10 @@
                 }
             }
             ref = refData;
-            $('#userTable').DataTable().ajax.reload();
+            // Check if DataTable is initialized before reloading
+            if ($.fn.DataTable.isDataTable('#userTable')) {
+                $('#userTable').DataTable().ajax.reload();
+            }
         });
         $(document).ready(function() {
             $(document.body).on('click', '.redirecttopage', function() {
@@ -209,6 +259,11 @@
                     $('.dt-button-background').hide();
                 }
             });
+            // Destroy existing DataTable if it exists
+            if ($.fn.DataTable.isDataTable('#userTable')) {
+                $('#userTable').DataTable().destroy();
+            }
+            
             var fieldConfig = {
                 columns: [{
                         key: 'fullName',
@@ -739,5 +794,7 @@
                 }).then(function(result) {});
             }
         });
+        } // End of initializeVendorsPage function
     </script>
 @endsection
+

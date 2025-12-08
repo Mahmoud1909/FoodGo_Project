@@ -196,6 +196,12 @@
                 var url = $(this).attr('data-url');
                 window.location.href = url;
             });
+            
+            // Destroy existing DataTable if it exists
+            if ($.fn.DataTable.isDataTable('#couponTable')) {
+                $('#couponTable').DataTable().destroy();
+            }
+            
             jQuery("#data-table_processing").show();
             const table = $('#couponTable').DataTable({
                 pageLength: 10, // Number of rows per page

@@ -1997,7 +1997,7 @@
                                             }
                                         } else {
                                             jQuery("#data-table_processing").hide();
-                                            window.location.href = '{{ route('restaurants') }}';
+                                            window.location.href = '{{ route('restaurants.control') }}';
                                         }
                                     });
                                 }).catch(err => {

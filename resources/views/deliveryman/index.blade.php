@@ -339,10 +339,10 @@
                         let filteredRecords = [];
                         await Promise.all(querySnapshot.docs.map(async (doc) => {
                             let childData = doc.data();
+                            // Always set id from document
+                            childData.id = doc.id;
+                            
                             if (childData.hasOwnProperty('vendorID') && childData.vendorID != '' && childData.vendorID != null) {
-
-
-                                childData.id = doc.id;
                                 childData.driverName = childData.firstName + ' ' + childData.lastName || " "
                                 childData.vendorID = childData.vendorID || childData.vendorID;
 
@@ -512,8 +512,16 @@
         async function buildHTML(val) {
             var html = [];
             var id = val.id;
+            
+            // Check if id exists and is valid before building route
+            if (!id || id === 'undefined' || id === undefined || id === null || id === '' || String(id).trim() === '') {
+                console.warn('⚠️ [DELIVERYMAN] Invalid id in buildHTML:', id, val);
+                // Return empty array if id is invalid - this will prevent the route error
+                return html;
+            }
+            
             var route1 = '{{ route('deliveryman.edit', ':id') }}';
-            route1 = route1.replace(':id', id);
+            route1 = route1.replace(':id', String(id).trim());
             if (checkDeletePermission) {
                 html.push('<td class="delete-all"><input type="checkbox" id="is_open_' + id + '" class="is_open" dataId="' +
                     id + '"><label class="col-3 control-label"\n' +

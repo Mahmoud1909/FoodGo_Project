@@ -102,7 +102,7 @@
         }
         
         database = db;
-        ref = database.collection('users').where("role", "in", ["customer"]);
+        ref = database.collection('users').where("type", "in", ["Normal", "customer", "employee"]);
     var user_permissions = '<?php echo @session("user_permissions")?>';
     user_permissions = Object.values(JSON.parse(user_permissions));
     var checkDeletePermission = false;
@@ -169,7 +169,7 @@
             }
             var status = $('.status_selector').val();
             var daterangepicker = $('#daterange').data('daterangepicker');
-            ref = database.collection('users').where("role", "in", ["customer"]);
+            ref = database.collection('users').where("type", "in", ["Normal", "customer", "employee"]);
         if ($('#daterange span').html() != '{{trans("lang.select_range")}}' && daterangepicker) {
             var from = moment(daterangepicker.startDate).toDate();
             var to = moment(daterangepicker.endDate).toDate();
@@ -424,27 +424,50 @@
                 table.search('').draw();
             }
         }, 300));
-    });
-    $("#is_active").click(function () {
-        $("#userTable .is_open").prop('checked', $(this).prop('checked'));
-    });
-    $("#deleteAll").click(function () {
-        if ($('#userTable .is_open:checked').length) {
-            if (confirm("{{trans('lang.selected_delete_alert')}}")) {
-                jQuery("#data-table_processing").show();
-                $('#userTable .is_open:checked').each(async function () {
-                    var dataId = $(this).attr('dataId');
-                    await deleteDocumentWithImage('users',dataId,'profilePictureURL');
-                    const getStoreName = deleteUserData(dataId);
-                    setTimeout(function () {
-                        window.location.reload();
-                    }, 7000);
+        
+        // Event handlers
+        $("#is_active").click(function () {
+            $("#userTable .is_open").prop('checked', $(this).prop('checked'));
+        });
+        $("#deleteAll").click(function () {
+            if ($('#userTable .is_open:checked').length) {
+                if (confirm("{{trans('lang.selected_delete_alert')}}")) {
+                    jQuery("#data-table_processing").show();
+                    $('#userTable .is_open:checked').each(async function () {
+                        var dataId = $(this).attr('dataId');
+                        await deleteDocumentWithImage('users',dataId,'profilePictureURL');
+                        const getStoreName = deleteUserData(dataId);
+                        setTimeout(function () {
+                            window.location.reload();
+                        }, 7000);
+                    });
+                }
+            } else {
+                alert("{{trans('lang.select_delete_alert')}}");
+            }
+        });
+        $(document).on("click", "a[name='user-delete']", async function (e) {
+            var id = this.id;
+            await deleteDocumentWithImage('users',id,'profilePictureURL');
+            const getStoreName = deleteUserData(id);
+            setTimeout(function () {
+                window.location.href = '{{ url()->current() }}';
+            }, 7000);
+        });
+        $(document).on("click", "input[name='isActive']", function (e) {
+            var ischeck = $(this).is(':checked');
+            var id = this.id;
+            if (ischeck) {
+                database.collection('users').doc(id).update({'active': true}).then(function (result) {
+                });
+            } else {
+                database.collection('users').doc(id).update({'active': false}).then(function (result) {
                 });
             }
-        } else {
-            alert("{{trans('lang.select_delete_alert')}}");
-        }
-    });
+        });
+        }); // End of $(document).ready
+    } // End of initUsersPage function
+    
     async function deleteUserData(userId) {
         await database.collection('wallet').where('user_id', '==', userId).get().then(async function (snapshotsItem) {
             if (snapshotsItem.docs.length > 0) {
@@ -491,25 +514,8 @@
                 console.log('Delete user error:', responseText.error);
             }
         });
-    }    
-    $(document).on("click", "a[name='user-delete']", async function (e) {
-        var id = this.id;
-        await deleteDocumentWithImage('users',id,'profilePictureURL');
-            const getStoreName = deleteUserData(id);
-            setTimeout(function () {
-                window.location.href = '{{ url()->current() }}';
-            }, 7000);
-    });
-    $(document).on("click", "input[name='isActive']", function (e) {
-        var ischeck = $(this).is(':checked');
-        var id = this.id;
-        if (ischeck) {
-            database.collection('users').doc(id).update({'active': true}).then(function (result) {
-            });
-        } else {
-            database.collection('users').doc(id).update({'active': false}).then(function (result) {
-            });
-        }
-    });
+    }
+    
+    }); // End of waitForFirestore callback
 </script>
 @endsection

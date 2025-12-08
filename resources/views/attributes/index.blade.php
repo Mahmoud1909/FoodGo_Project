@@ -97,6 +97,37 @@
                             </table>
                         </div>
                  </div>
+                 
+                 <!-- Custom Delete Confirmation Modal -->
+                 <div class="modal fade" id="deleteAttributeModal" tabindex="-1" role="dialog" aria-labelledby="deleteAttributeModalLabel" aria-hidden="true">
+                     <div class="modal-dialog modal-dialog-centered" role="document">
+                         <div class="modal-content">
+                             <div class="modal-header" style="background-color: #dc3545; color: white;">
+                                 <h5 class="modal-title" id="deleteAttributeModalLabel">
+                                     <i class="mdi mdi-alert-circle mr-2"></i>Confirm Delete
+                                 </h5>
+                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="color: white;">
+                                     <span aria-hidden="true">&times;</span>
+                                 </button>
+                             </div>
+                             <div class="modal-body text-center" style="padding: 30px;">
+                                 <i class="mdi mdi-delete-circle" style="font-size: 64px; color: #dc3545; margin-bottom: 20px;"></i>
+                                 <h4 style="margin-bottom: 15px;">Are you sure?</h4>
+                                 <p id="deleteAttributeMessage" style="font-size: 16px; color: #666;">
+                                     You are about to delete this attribute. This action cannot be undone.
+                                 </p>
+                             </div>
+                             <div class="modal-footer" style="justify-content: center; border-top: none; padding: 20px;">
+                                 <button type="button" class="btn btn-secondary" data-dismiss="modal" style="min-width: 100px;">
+                                     <i class="mdi mdi-close mr-2"></i>Cancel
+                                 </button>
+                                 <button type="button" class="btn btn-danger" id="confirmDeleteAttribute" style="min-width: 100px;">
+                                     <i class="mdi mdi-delete mr-2"></i>Delete
+                                 </button>
+                             </div>
+                         </div>
+                     </div>
+                 </div>
                 </div>
             </div>
         </div>
@@ -251,20 +282,60 @@
         route1 = route1.replace(':id', id);
         html.push('<a href="' + route1 + '">' + val.title + '</a>');
         var actionHtml = '';
-        actionHtml = actionHtml + '<span class="action-btn"><a href="' + route1 + '"><i class="mdi mdi-lead-pencil" title="Edit"></i></a>';
-        if (checkDeletePermission) {
-            actionHtml += '<a id="' + val.id + '" name="attribute-delete" class="delete-btn" href="javascript:void(0)"><i class="mdi mdi-delete"></i></a>';
-        }
+        actionHtml = actionHtml + '<span class="action-btn"><a href="' + route1 + '" title="Edit"><i class="mdi mdi-lead-pencil"></i></a>';
+        // Always show delete icon, permission check will be done in the delete function
+        actionHtml += '<a id="' + val.id + '" name="attribute-delete" class="delete-btn" href="javascript:void(0)" title="Delete" style="margin-left: 8px;"><i class="mdi mdi-delete" style="color: #dc3545;"></i></a>';
         actionHtml +='</span>';
         html.push(actionHtml);
         return html;
     }
+    var deleteAttributeId = null;
+    
     $(document).on("click", "a[name='attribute-delete']", function (e) {
+        e.preventDefault();
+        
         var id = this.id;
+        var attributeName = $(this).closest('tr').find('a').first().text();
+        
+        // Store the ID and attribute name for deletion
+        deleteAttributeId = id;
+        
+        // Update modal message with attribute name
+        $('#deleteAttributeMessage').html('You are about to delete <strong style="color: #dc3545;">"' + attributeName + '"</strong>. This action cannot be undone.');
+        
+        // Show the modal
+        $('#deleteAttributeModal').modal('show');
+    });
+    
+    // Handle confirm delete button click
+    $('#confirmDeleteAttribute').on('click', function() {
+        if (!deleteAttributeId) {
+            return;
+        }
+        
+        // Close modal
+        $('#deleteAttributeModal').modal('hide');
+        
+        // Show loading
         jQuery("#data-table_processing").show();
-        database.collection('vendor_attributes').doc(id).delete().then(function (result) {
-            window.location.href = '{{ route("attributes")}}';
+        
+        // Delete from Firestore
+        database.collection('vendor_attributes').doc(deleteAttributeId).delete().then(function (result) {
+            jQuery("#data-table_processing").hide();
+            // Reload DataTable instead of full page reload
+            if ($.fn.DataTable.isDataTable('#attributeTable')) {
+                $('#attributeTable').DataTable().ajax.reload();
+            } else {
+                window.location.href = '{{ route("attributes")}}';
+            }
+        }).catch(function(error) {
+            console.error('Error deleting attribute:', error);
+            jQuery("#data-table_processing").hide();
+            alert('Error deleting attribute: ' + error.message);
         });
+        
+        // Reset delete ID
+        deleteAttributeId = null;
     });
 
         }); // End of waitForFirestore callback

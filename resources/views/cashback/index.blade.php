@@ -109,7 +109,22 @@
             }
         });
 
+        // Prevent multiple initializations
+        var cashbackPageInitialized = false;
+        
         $(document).ready(function() {
+            // Destroy existing DataTable if it exists
+            if ($.fn.DataTable.isDataTable('#cashbackTable')) {
+                $('#cashbackTable').DataTable().destroy();
+            }
+            
+            // Prevent multiple initializations
+            if (cashbackPageInitialized) {
+                console.log('ℹ️ [CASHBACK] Page already initialized, skipping...');
+                return;
+            }
+            
+            cashbackPageInitialized = true;
             jQuery("#data-table_processing").show();
             const table = $('#cashbackTable').DataTable({
                 pageLength: 10, // Number of rows per page

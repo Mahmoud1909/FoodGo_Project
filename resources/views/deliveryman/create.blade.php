@@ -159,7 +159,22 @@
 
 
         var placeholderImage = '';
-        var createdAtman = firebase.firestore.Timestamp.fromDate(new Date());
+        var createdAtman = null;
+        
+        // Initialize timestamp after Firebase is ready
+        try {
+            if (typeof firebase !== 'undefined' && firebase.firestore && firebase.firestore.Timestamp && firebase.firestore.Timestamp.fromDate) {
+                createdAtman = firebase.firestore.Timestamp.fromDate(new Date());
+            } else if (typeof firebase !== 'undefined' && firebase.firestore && firebase.firestore.FieldValue && firebase.firestore.FieldValue.serverTimestamp) {
+                createdAtman = firebase.firestore.FieldValue.serverTimestamp();
+            } else {
+                // Fallback: create timestamp manually
+                createdAtman = new Date();
+            }
+        } catch (e) {
+            console.warn('Error creating timestamp:', e);
+            createdAtman = new Date();
+        }
         var placeholder = database.collection('settings').doc('placeHolderImage');
         placeholder.get().then(async function(snapshotsimage) {
             var placeholderImageData = snapshotsimage.data();

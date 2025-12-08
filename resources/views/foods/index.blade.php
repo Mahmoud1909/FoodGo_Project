@@ -139,12 +139,13 @@
 @endsection
 @section('scripts')
 <script type="text/javascript">
-    const urlParams=new URLSearchParams(location.search);
+    // Use var instead of const to avoid redeclaration errors
+    var urlParams = new URLSearchParams(location.search);
+    var categoryID = '';
     for(const [key,value] of urlParams) {
         if(key=='categoryID') {
-            var categoryID=value;
-        } else {
-            var categoryID='';
+            categoryID = value;
+            break; // Exit loop once found
         }
     }
     var database=null;

@@ -1,8 +1,8 @@
 <div class="navbar-header">
     <a class="navbar-brand" href="<?php echo URL::to('/'); ?>">
         <b>
-            <img src="{{ asset('/images/logo_web.png') }}" alt="homepage" class="dark-logo" width="100%" id="logo_web">
-            <img src="{{ asset('images/logo-light-icon.png') }}" alt="homepage" class="light-logo">
+            <img src="{{ asset('/images/logo_web.webp') }}" alt="homepage" class="dark-logo" width="100%" id="logo_web">
+            <img src="{{ asset('images/logo-light-icon.webp') }}" alt="homepage" class="light-logo">
         </b>
         <span>
         </span>

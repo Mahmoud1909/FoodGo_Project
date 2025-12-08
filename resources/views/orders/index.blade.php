@@ -732,7 +732,9 @@
                     table.search('').draw();
                 }
             }, 300));
-        });
+            }); // End of $(document).ready
+        } // End of initOrdersDataTable function
+        
         async function buildHTML(val) {
             var html = [];
             newdate = '';

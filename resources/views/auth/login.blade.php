@@ -73,7 +73,7 @@
     <div class="login-register">
         <div class="login-logo text-center py-3">
             <a href="#" style="display: inline-block;background: #fff;padding: 10px;border-radius: 5px;"><img
-                        src="{{ asset('images/logo_web.png') }}"> </a>
+                        src="{{ asset('images/logo_web.webp') }}"> </a>
         </div>
         <div class="login-box card" style="margin-bottom:0%;">
             <div class="card-body">

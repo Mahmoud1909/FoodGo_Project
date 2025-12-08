@@ -8,7 +8,7 @@
         <div class="col-md-7 align-self-center">
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="index.php">{{trans('lang.dashboard')}}</a></li>
-                <li class="breadcrumb-item"><a href= "{!! route('restaurants') !!}" >{{trans('lang.restaurant_plural')}}</a></li>
+                <li class="breadcrumb-item"><a href= "{!! route('restaurants.control') !!}" >Restaurant Control</a></li>
                 <li class="breadcrumb-item active">{{trans('lang.restaurant_edit')}}</li>
             </ol>
         </div>
@@ -163,7 +163,7 @@
 </div>
       <div class="form-group col-12 text-center">
           <button type="button" class="btn btn-primary  save_restaurant_btn" ><i class="fa fa-save"></i> {{trans('lang.save')}}</button>
-         <a href="{!! route('restaurants') !!}" class="btn btn-default"><i class="fa fa-undo"></i>{{trans('lang.cancel')}}</a>
+         <a href="{!! route('restaurants.control') !!}" class="btn btn-default"><i class="fa fa-undo"></i>{{trans('lang.cancel')}}</a>
       </div>
     </div>
   </div>
@@ -231,7 +231,7 @@
 			var categoryTitle = $( "#restaurant_cuisines option:selected" ).text();
 		    database.collection('vendors').doc(id).update({'title':restaurantname,'description':description,'latitude':latitude,
 		      'longitude':longitude,'location':address,'photo':photo,'categoryID':cuisines,'phonenumber':phonenumber,'categoryTitle':categoryTitle}).then(function(result) {
-		                window.location.href = '{{ route("restaurants")}}';
+		                window.location.href = '{{ route("restaurants.control")}}';
 		             }); 
 		})
 	})

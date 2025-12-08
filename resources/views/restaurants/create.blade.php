@@ -21,7 +21,7 @@
             <div class="col-md-7 align-self-center">
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a href="{{ url('/dashboard') }}">{{ trans('lang.dashboard') }}</a></li>
-                    <li class="breadcrumb-item"><a href="{!! route('restaurants') !!}">{{ trans('lang.restaurant_plural') }}</a></li>
+                    <li class="breadcrumb-item"><a href="{!! route('restaurants.control') !!}">Restaurant Control</a></li>
                     <li class="breadcrumb-item active">{{ trans('lang.create_restaurant') }}</li>
                 </ol>
             </div>
@@ -816,7 +816,7 @@
                     <button type="button" class="btn btn-primary  save-form-btn"><i class="fa fa-save"></i>
                         {{ trans('lang.save') }}
                     </button>
-                    <a href="{!! route('restaurants') !!}" class="btn btn-default"><i class="fa fa-undo"></i>{{ trans('lang.cancel') }}</a>
+                    <a href="{!! route('restaurants.control') !!}" class="btn btn-default"><i class="fa fa-undo"></i>{{ trans('lang.cancel') }}</a>
                 </div>
 
             </div>
@@ -1423,7 +1423,7 @@
                                     'isSelfDelivery': enable_self_delivery
                                 }).then(async function(result) {
                                     jQuery("#data-table_processing").hide();
-                                    window.location.href = '{{ route('restaurants') }}';
+                                    window.location.href = '{{ route('restaurants.control') }}';
                                 });
                             })
                         }).catch(err => {

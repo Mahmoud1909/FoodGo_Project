@@ -939,20 +939,44 @@ service cloud.firestore {
             console.error('Error fetching map type:', error);
         });
     }
+    
+    // Global callback function for Google Maps initialization
+    window.initGoogleMaps = function() {
+        console.log('✅ Google Maps API initialized successfully');
+        // Only request geolocation if user has interacted with page
+        if (document.hasFocus()) {
+            navigator.geolocation.getCurrentPosition(GeolocationSuccessCallback,GeolocationErrorCallback);
+        }
+        if(typeof window['InitializeGodsEyeMap'] === 'function') { 
+            InitializeGodsEyeMap();
+        }
+    };
+    
+    // Global error handler for Google Maps API errors
+    window.gm_authFailure = function() {
+        console.error('❌ Google Maps API authentication failed. Please check your API key.');
+        alert('Google Maps API authentication failed. Please check your API key in .env file (GEO_API_KEY) and ensure:\n1. The API key is correct\n2. Maps JavaScript API is enabled in Google Cloud Console\n3. The API key has proper restrictions configured.');
+    };
 
     async function loadGoogleMapsScript() {
-        var googleMapKey = '';
-        if (database) {
-            try {
-                var googleMapKeySnapshotsHeader = await database.collection('settings').doc("googleMapKey").get();
-                if (googleMapKeySnapshotsHeader && googleMapKeySnapshotsHeader.exists) {
-                    var placeholderImageHeaderData = googleMapKeySnapshotsHeader.data();
-                    if (placeholderImageHeaderData && placeholderImageHeaderData.key && placeholderImageHeaderData.key !== 'google_maps_api_key') {
-                        googleMapKey = placeholderImageHeaderData.key;
+        // First, try to get API key from .env file (GEO_API_KEY or GOOGLE_MAPS_API_KEY)
+        // Default value: AIzaSyB46gP1VJUFN5BZQRf7d8QcgLi0mnNGaeQ
+        var googleMapKey = '{{ env("GEO_API_KEY", env("GOOGLE_MAPS_API_KEY", "AIzaSyB46gP1VJUFN5BZQRf7d8QcgLi0mnNGaeQ")) }}';
+        
+        // If not found in .env or empty, try to get from Firestore
+        if (!googleMapKey || googleMapKey === '' || googleMapKey === 'null') {
+            if (database) {
+                try {
+                    var googleMapKeySnapshotsHeader = await database.collection('settings').doc("googleMapKey").get();
+                    if (googleMapKeySnapshotsHeader && googleMapKeySnapshotsHeader.exists) {
+                        var placeholderImageHeaderData = googleMapKeySnapshotsHeader.data();
+                        if (placeholderImageHeaderData && placeholderImageHeaderData.key && placeholderImageHeaderData.key !== 'google_maps_api_key') {
+                            googleMapKey = placeholderImageHeaderData.key;
+                        }
                     }
+                } catch (error) {
+                    console.warn('Error loading Google Maps key from Firestore:', error);
                 }
-            } catch (error) {
-                console.warn('Error loading Google Maps key from Firestore:', error);
             }
         }
         
@@ -992,23 +1016,26 @@ service cloud.firestore {
                 loadScript(0);
             };
         } else {
-            if (googleMapKey && googleMapKey !== '') {
-                script.src = "https://maps.googleapis.com/maps/api/js?key=" + googleMapKey + "&libraries=places,drawing&loading=async";
+            if (googleMapKey && googleMapKey !== '' && googleMapKey !== 'null') {
+                // Use API key with callback for error handling
+                script.src = "https://maps.googleapis.com/maps/api/js?key=" + googleMapKey + "&libraries=places,drawing&loading=async&callback=initGoogleMaps";
+                console.log('✅ Loading Google Maps with API key from .env');
             } else {
-                console.warn('⚠️ Google Maps API key not found in Firestore. Please add it to Firestore collection "settings" document "googleMapKey" with field "key"');
-                script.src = "https://maps.googleapis.com/maps/api/js?libraries=places,drawing&loading=async";
+                console.warn('⚠️ Google Maps API key not found. Using default key.');
+                // Use default API key
+                var defaultKey = "AIzaSyB46gP1VJUFN5BZQRf7d8QcgLi0mnNGaeQ";
+                script.src = "https://maps.googleapis.com/maps/api/js?key=" + defaultKey + "&libraries=places,drawing&loading=async&callback=initGoogleMaps";
             }
-            script.onload = function () {
-                // Only request geolocation if user has interacted with page
-                if (document.hasFocus()) {
-                    navigator.geolocation.getCurrentPosition(GeolocationSuccessCallback,GeolocationErrorCallback);
-                }
-                if(typeof window['InitializeGodsEyeMap'] === 'function') { 
-                    InitializeGodsEyeMap();
-                }
-            };
+            
+            // Add error handler
             script.onerror = function() {
-                console.error('❌ Failed to load Google Maps API');
+                console.error('❌ Failed to load Google Maps API script');
+                alert('Failed to load Google Maps. Please check your API key and ensure Maps JavaScript API is enabled in Google Cloud Console.');
+            };
+            
+            // Note: onload may not fire if callback is used, so we rely on callback function
+            script.onload = function () {
+                console.log('✅ Google Maps script loaded successfully');
             };
         }
         document.head.appendChild(script);

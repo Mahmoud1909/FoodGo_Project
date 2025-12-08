@@ -19,7 +19,7 @@
             <div class="col-md-7 align-self-center">
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a href="{{ url('/dashboard') }}">{{ trans('lang.dashboard') }}</a></li>
-                    <li class="breadcrumb-item"><a href="{!! route('restaurants') !!}">{{ trans('lang.restaurant_plural') }}</a></li>
+                    <li class="breadcrumb-item"><a href="{!! route('restaurants.control') !!}">Restaurant Control</a></li>
                     <li class="breadcrumb-item"><a href="{!! route('restaurants.control') !!}">Restaurant Control</a></li>
                     <li class="breadcrumb-item active">Edit Restaurant (New)</li>
                 </ol>
@@ -2163,12 +2163,12 @@
                                                     'videoUrl': resStoryVid,
                                                 }).then(function(result) {
                                                     jQuery("#data-table_processing").hide();
-                                                    window.location.href = '{{ route('restaurants') }}';
+                                                    window.location.href = '{{ route('restaurants.control') }}';
                                                 });
                                             }
                                         } else {
                                             jQuery("#data-table_processing").hide();
-                                            window.location.href = '{{ route('restaurants') }}';
+                                            window.location.href = '{{ route('restaurants.control') }}';
                                         }
                                     });
                                 }).catch(err => {

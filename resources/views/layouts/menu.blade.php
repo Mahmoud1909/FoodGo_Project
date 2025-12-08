@@ -69,6 +69,14 @@
         @endif
         @if (in_array('users', $role_has_permission))
             <li>
+                <a class="waves-effect waves-dark" href="{!! route('all.customers') !!}">
+                    <i class="mdi mdi-account-group"></i>
+                    <span class="hide-menu">All Customers</span>
+                </a>
+            </li>
+        @endif
+        @if (in_array('users', $role_has_permission))
+            <li>
                 <a class="waves-effect waves-dark" href="{!! url('users') !!}">
                     <i class="mdi mdi-account-multiple"></i>
                     <span class="hide-menu">{{ trans('lang.user_customer') }}</span>
@@ -94,18 +102,21 @@
                 </ul>
             </li>
         @endif
-        @if (in_array('drivers', $role_has_permission) || in_array('approve_drivers', $role_has_permission) || in_array('pending_drivers', $role_has_permission) || in_array('restaurants', $role_has_permission))
+        @if (in_array('drivers', $role_has_permission) || in_array('approve_drivers', $role_has_permission) || in_array('pending_drivers', $role_has_permission) || in_array('restaurants', $role_has_permission) || in_array('customers', $role_has_permission))
             <li class="nav-subtitle"><span class="nav-subtitle-span">{{ trans('lang.restaurant_and_driver_management') }}</span></li>
         @endif
         @if (in_array('restaurants', $role_has_permission))
-            <li><a class="waves-effect waves-dark" href="{!! url('restaurants') !!}">
-                    <i class="mdi mdi-shopping"></i>
-                    <span class="hide-menu">{{ trans('lang.restaurant_plural') }}</span>
-                </a>
-            </li>
             <li><a class="waves-effect waves-dark" href="{!! url('restaurants/control') !!}">
                     <i class="mdi mdi-settings-box"></i>
                     <span class="hide-menu">Restaurant Control</span>
+                </a>
+            </li>
+        @endif
+        @if (in_array('customers', $role_has_permission))
+            <li>
+                <a class="waves-effect waves-dark" href="{!! url('customers') !!}">
+                    <i class="mdi mdi-account-group"></i>
+                    <span class="hide-menu">Customers</span>
                 </a>
             </li>
         @endif
