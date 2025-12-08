@@ -109,7 +109,7 @@
             }
         });
 
-        // Prevent multiple initializations
+        image.png        // Prevent multiple initializations
         var cashbackPageInitialized = false;
         
         $(document).ready(function() {
