@@ -282,3 +282,5 @@ Uncaught SyntaxError: missing ) after argument list (at restaurants:2573:21)
 **الحالة:** ✅ تم إضافة تأكيدات الاتصال مع Firestore
 
 
+
+

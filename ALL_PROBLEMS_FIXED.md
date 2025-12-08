@@ -294,3 +294,5 @@ firebase deploy --only firestore:indexes
 **الحالة:** ✅ تم تحديد جميع المشاكل
 
 
+
+

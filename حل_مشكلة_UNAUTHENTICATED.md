@@ -300,3 +300,5 @@ node show-restaurant-data.js
 3. انتظر 5 دقائق إضافية
 4. جرب إنشاء Service Account جديد (راجع `FIX_UNAUTHENTICATED_ERROR.md`)
 
+
+

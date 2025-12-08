@@ -216,3 +216,5 @@ console.log('📋 [BUILD HTML] Restaurant data:', {
 **الحالة:** ✅ تم إصلاح جميع Syntax Errors المحتملة
 
 
+
+

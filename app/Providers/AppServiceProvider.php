@@ -16,14 +16,36 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        setcookie('XSRF-TOKEN-AK', bin2hex(env('FIREBASE_APIKEY')), time() + 3600, "/"); 
-        setcookie('XSRF-TOKEN-AD', bin2hex(env('FIREBASE_AUTH_DOMAIN')), time() + 3600, "/"); 
-        setcookie('XSRF-TOKEN-DU', bin2hex(env('FIREBASE_DATABASE_URL')), time() + 3600, "/"); 
-        setcookie('XSRF-TOKEN-PI', bin2hex(env('FIREBASE_PROJECT_ID')), time() + 3600, "/"); 
-        setcookie('XSRF-TOKEN-SB', bin2hex(env('FIREBASE_STORAGE_BUCKET')), time() + 3600, "/"); 
-        setcookie('XSRF-TOKEN-MS', bin2hex(env('FIREBASE_MESSAAGING_SENDER_ID')), time() + 3600, "/"); 
-        setcookie('XSRF-TOKEN-AI', bin2hex(env('FIREBASE_APP_ID')), time() + 3600, "/"); 
-        setcookie('XSRF-TOKEN-MI', bin2hex(env('FIREBASE_MEASUREMENT_ID')), time() + 3600, "/"); 
+        // Set Firebase cookies only if values exist to prevent errors
+        try {
+            if (env('FIREBASE_APIKEY')) {
+                setcookie('XSRF-TOKEN-AK', bin2hex(env('FIREBASE_APIKEY')), time() + 3600, "/"); 
+            }
+            if (env('FIREBASE_AUTH_DOMAIN')) {
+                setcookie('XSRF-TOKEN-AD', bin2hex(env('FIREBASE_AUTH_DOMAIN')), time() + 3600, "/"); 
+            }
+            if (env('FIREBASE_DATABASE_URL')) {
+                setcookie('XSRF-TOKEN-DU', bin2hex(env('FIREBASE_DATABASE_URL')), time() + 3600, "/"); 
+            }
+            if (env('FIREBASE_PROJECT_ID')) {
+                setcookie('XSRF-TOKEN-PI', bin2hex(env('FIREBASE_PROJECT_ID')), time() + 3600, "/"); 
+            }
+            if (env('FIREBASE_STORAGE_BUCKET')) {
+                setcookie('XSRF-TOKEN-SB', bin2hex(env('FIREBASE_STORAGE_BUCKET')), time() + 3600, "/"); 
+            }
+            if (env('FIREBASE_MESSAAGING_SENDER_ID')) {
+                setcookie('XSRF-TOKEN-MS', bin2hex(env('FIREBASE_MESSAAGING_SENDER_ID')), time() + 3600, "/"); 
+            }
+            if (env('FIREBASE_APP_ID')) {
+                setcookie('XSRF-TOKEN-AI', bin2hex(env('FIREBASE_APP_ID')), time() + 3600, "/"); 
+            }
+            if (env('FIREBASE_MEASUREMENT_ID')) {
+                setcookie('XSRF-TOKEN-MI', bin2hex(env('FIREBASE_MEASUREMENT_ID')), time() + 3600, "/"); 
+            }
+        } catch (\Exception $e) {
+            // Silently fail if cookies can't be set
+            \Log::warning('Failed to set Firebase cookies', ['error' => $e->getMessage()]);
+        }
     }
     
     /**
@@ -33,11 +55,24 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-
         $countries_data = [];
-        $get_countries_json = file_get_contents(public_path('countriesdata.json'));
-        if($get_countries_json != ''){
-            $countries_data = json_decode($get_countries_json);
+        $countries_file = public_path('countriesdata.json');
+        
+        // Safely load countries data
+        try {
+            if (file_exists($countries_file)) {
+                $get_countries_json = file_get_contents($countries_file);
+                if ($get_countries_json != '') {
+                    $countries_data = json_decode($get_countries_json, true);
+                    if (json_last_error() !== JSON_ERROR_NONE) {
+                        $countries_data = [];
+                        \Log::warning('Failed to parse countriesdata.json', ['error' => json_last_error_msg()]);
+                    }
+                }
+            }
+        } catch (\Exception $e) {
+            \Log::warning('Failed to load countries data', ['error' => $e->getMessage()]);
+            $countries_data = [];
         }
         
         // Try to get OpenAI settings from Firestore, but don't fail if it's not available

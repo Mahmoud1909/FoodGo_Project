@@ -232,3 +232,5 @@ window.location.href = '{{ route('restaurants.control') }}';
 **الحالة:** ✅ تم الإضافة بنجاح
 
 
+
+

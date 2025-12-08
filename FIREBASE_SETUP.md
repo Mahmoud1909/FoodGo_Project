@@ -224,3 +224,5 @@ firebase deploy --only firestore:indexes
 استخدم الطريقة البديلة (Firebase Console) لإنشاء الـ indexes يدوياً.
 
 
+
+
