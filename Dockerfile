@@ -37,7 +37,7 @@ COPY . /var/www/html
 RUN composer install --optimize-autoloader --no-dev --no-interaction
 
 # تثبيت تبعيات Node.js وبناء الأصول
-RUN npm install && npm run production
+RUN npm install --legacy-peer-deps && npm run production
 
 # إعداد الصلاحيات
 RUN chown -R www-data:www-data /var/www/html \
