@@ -50,6 +50,7 @@ ENV APACHE_DOCUMENT_ROOT=/var/www/html/public
 
 # إعداد Apache للعمل مع Laravel
 RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf \
+    && echo 'ServerName localhost' >> /etc/apache2/apache2.conf \
     && echo '<VirtualHost *:80>\n\
     ServerName localhost\n\
     DocumentRoot /var/www/html/public\n\
