@@ -101,7 +101,7 @@ Dockerfile
 APP_NAME=Foodie Admin
 APP_ENV=production
 APP_DEBUG=false
-APP_URL=https://your-service-name.onrender.com
+APP_URL=https://FoodGO.SAdmin.com
 ```
 
 #### مفتاح التطبيق (APP_KEY):
@@ -115,7 +115,7 @@ php artisan key:generate --show
 
 2. انسخ المفتاح وأضفه في Render:
 ```
-APP_KEY=base64:YOUR_GENERATED_KEY_HERE
+APP_KEY=base64:base64:YnAD5MEYUBdEnjQ8LwlKU9F03nm5Qt9KMH//nhUM4CI=
 ```
 
 #### قاعدة البيانات:
