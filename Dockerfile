@@ -1,7 +1,7 @@
 # Dockerfile for Laravel Application on Render
-# استخدام PHP 8.1 مع Apache
+# استخدام PHP 8.2 مع Apache
 
-FROM php:8.1-apache
+FROM php:8.2-apache
 
 # تثبيت التبعيات المطلوبة
 RUN apt-get update && apt-get install -y \
@@ -21,7 +21,7 @@ RUN apt-get update && apt-get install -y \
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 # تثبيت Node.js و NPM
-RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash - \
+RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
     && apt-get install -y nodejs
 
 # تفعيل mod_rewrite في Apache
