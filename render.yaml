@@ -1,0 +1,33 @@
+# Render Configuration for Laravel Application
+# ملف إعدادات Render للمشروع
+
+services:
+  - type: web
+    name: foodie-admin-panel
+    runtime: docker
+    plan: starter  # يمكن تغييره إلى: free, starter, standard, pro
+    region: oregon  # أو: frankfurt, singapore, mumbai, ohio, oregon, virginia
+    buildCommand: ""
+    startCommand: ""
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    envVars:
+      - key: APP_NAME
+        value: Foodie Admin
+      - key: APP_ENV
+        value: production
+      - key: APP_DEBUG
+        value: false
+      - key: LOG_CHANNEL
+        value: stack
+      - key: LOG_LEVEL
+        value: error
+      # سيتم إضافة باقي المتغيرات من لوحة التحكم Render
+      # مثل: APP_KEY, DB_*, MAIL_*, etc.
+
+databases:
+  - name: foodie-admin-db
+    plan: starter  # يمكن تغييره حسب الحاجة
+    databaseName: foodie_admin
+    user: foodie_admin_user
+
