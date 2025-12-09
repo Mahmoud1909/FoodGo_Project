@@ -33,6 +33,10 @@ WORKDIR /var/www/html
 # نسخ ملفات المشروع
 COPY . /var/www/html
 
+# نسخ entrypoint script
+COPY docker-entrypoint.sh /usr/local/bin/
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh
+
 # تثبيت تبعيات PHP
 RUN composer install --optimize-autoloader --no-dev --no-interaction
 
@@ -63,9 +67,9 @@ RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.
     CustomLog ${APACHE_LOG_DIR}/access.log combined\n\
 </VirtualHost>' > /etc/apache2/sites-available/000-default.conf
 
-# فتح المنفذ 80
+# فتح المنفذ 80 (Railway سيستخدم PORT ديناميكي)
 EXPOSE 80
 
-# أمر البدء
-CMD ["apache2-foreground"]
+# استخدام entrypoint script
+ENTRYPOINT ["docker-entrypoint.sh"]
 
